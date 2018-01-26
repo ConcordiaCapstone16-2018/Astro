@@ -204,7 +204,7 @@
 	
     </link>
 
-	<plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+	<plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive_test.so">
 		
 		
 		<legacyMode>false</legacyMode>

@@ -10,6 +10,6 @@
 
 - add goals for navigation
 
-
+- Find out about what license is appropriate
 
 
