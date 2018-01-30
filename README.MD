@@ -11,6 +11,8 @@ ROS package for autonomous operation of Astro Toolcart.
 
 2. key_strokes requires a python package called keyboard2. key_strokes requires a python package called keyboard  
 
+run "apt-get install python-pip"
+run "pip install keyboard"
 
 --GAZEBO INSTRUCTIONS--
 
