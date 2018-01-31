@@ -29,4 +29,8 @@ ROS package for autonomous operation of Astro Toolcart.
 	export GAZEBO_RESOURCE_PATH="/home/YOUR_USER/workspace/src/pack1/worlds"
 	export GAZEBO_PLUGIN_PATH="/home/YOUR_USER/workspace/src/pack1/plugs"
 
+-- MISCELLANEOUS NOTES -- 
+1. Changed cpp to python. If you want to compile a cpp file as a node, you must put the .cpp in to the pack1/src file, and add the build instruction in to the CMakeLists.txt in pack1
+
+
 

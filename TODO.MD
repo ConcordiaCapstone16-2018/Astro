@@ -1,15 +1,15 @@
-- insert yellow_robot in to world launch file
+- insert yellow_robot in to world launch file (done)
 
-- consolidate nodes in to pack1 launch file
+- consolidate nodes in to pack1 launch file(current)
 
-- change name of pack1 to astro
+- change name of pack1 to astro (current)
 
-- get model of toolcart
+- get model of toolcart (current)
 
 - find out about different types of mapping
 
-- add goals for navigation
+- add goals for navigation 
 
-- Find out about what license is appropriate
+- Find out about what license is appropriate 
 
 

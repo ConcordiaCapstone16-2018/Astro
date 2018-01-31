@@ -1,38 +1,47 @@
 <?xml version = "1.0"?>
-
 <sdf version='1.4'>
 	
-	<model name="yellow_robot">
+
+	
+	
+	<model name="astro">
 
 		<static>false</static>
 
 		<link name="base_link">
 
-			<pose> 0 0 .5 0 0 0 </pose> 
-			<inertial>
-				<mass>20</mass>			
-			</inertial>
+		<!--Bottom bed of cart-->
+
+			<pose> 0 0 .402857 0 0 0 </pose> 
+			
+			<inertia>
+				<mass>20</mass>
+          <ixx>0.166667</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.166667</iyy>
+          <iyz>0</iyz>
+          <izz>0.166667</izz>
+			</inertia>
 
 			<collision name="collision">
 				<geometry>
-					<cylinder>
-						<radius>1</radius>
-						<length>0.2</length>
-					</cylinder>
+					<box>
+						<size>.786 .453 0.784</radius>
+					</box>
 				</geometry>
 			</collision>
 
 			<visual name="visual">
 				<geometry>
-                    <cylinder>
-                        <radius>1</radius>
-                        <length>0.2</length>
-                    </cylinder>
-                </geometry>
+					<box>
+          	<size>.786 .453 0.784</radius>
+					</box>
+        </geometry>
 			</visual>
 
 			<collision name="caster_collision_1">
-				<pose> 0 -.75 -.23 0 0 0 </pose>	
+				<pose> -0.315 0.1485 -0.067143 0 -0 0 </pose>	
 				<geometry>
 					<sphere>	
 						<radius>.25</radius>
@@ -51,7 +60,7 @@
 			</collision>
 
 			<visual name="caster_visual_1">
-				<pose> 0 .75 -.23 0 0 0 </pose> 
+				<pose> -0.315 0.1485 -0.067143 0 -0 0 </pose> 
 				<geometry>              
                     <sphere>
                         <radius>.25</radius>
@@ -59,8 +68,10 @@
 				</geometry>
 			</visual>
 
+
+
 			<collision name="caster_collision_2">
-                <pose> 0 .75 -.23 0 0 0 </pose>
+                <pose> -0.315 -0.1485 -0.067143 0 -0 0 </pose>
 				<geometry>              
                     <sphere>
                         <radius>.25</radius>
@@ -79,7 +90,65 @@
             </collision>
 			
 			<visual name="caster_visual_2">
-                <pose> 0 -.75 -.23 0 0 0 </pose>
+                <pose>-0.315 -0.1485 -0.067143 0 -0 0</pose>
+				<geometry>
+                    <sphere>
+                        <radius>.25</radius>
+                	</sphere>
+				</geometry>
+            </visual>
+		</link>
+
+<collision name="caster_collision_3">
+                <pose>0.315 0.1485 -0.067143 0 -0 0</pose>
+				<geometry>              
+                    <sphere>
+                        <radius>.25</radius>
+                	</sphere>
+				</geometry>
+				<surface>
+                    <friction>
+                        <ode>
+                            <mu>0</mu>
+                            <mu2>0</mu2>
+                            <slip1>1.0</slip1>
+                            <slip2>1.0</slip2>
+                        </ode>
+                    </friction>
+                </surface>
+            </collision>
+			
+			<visual name="caster_visual_3">
+                <pose>0.315 0.1485 -0.067143 0 -0 0</pose>
+				<geometry>
+                    <sphere>
+                        <radius>.25</radius>
+                	</sphere>
+				</geometry>
+            </visual>
+		</link>
+
+<collision name="caster_collision_4">
+                <pose>0.315 -0.1485 -0.067143 0 -0 0</pose>
+				<geometry>              
+                    <sphere>
+                        <radius>.25</radius>
+                	</sphere>
+				</geometry>
+				<surface>
+                    <friction>
+                        <ode>
+                            <mu>0</mu>
+                            <mu2>0</mu2>
+                            <slip1>1.0</slip1>
+                            <slip2>1.0</slip2>
+                        </ode>
+                    </friction>
+                </surface>
+            </collision>
+			
+			<visual name="caster_visual_4">
+                <pose>0.315 -0.1485 -0.067143 0 -0 0</pose>
 				<geometry>
                     <sphere>
                         <radius>.25</radius>
@@ -89,9 +158,16 @@
 		</link>
 
 
+
+
+
+
+
+
+
 		<link name="left_wheel">
 			
-			<pose> -1 0 .5 0 1.57 0 </pose>
+			<pose> 1 0 .5 0 1.57 0 </pose>
 			
 			<collision name="collision">
                 <geometry>
@@ -115,7 +191,7 @@
 
 		<link name="right_wheel">
 
-            <pose> 1 0 .5 0 1.57 0 </pose>
+            <pose> -1 0 .5 0 1.57 0 </pose>
 
             <collision name="collision">
                 <geometry>
@@ -163,7 +239,7 @@
 
 
 	<link name="hokuyo_link">
-		<pose>0 1 1 0 0 0</pose>
+		<pose>0 1 .65 0 0 1.57</pose>
 		<inertial>
 			<mass>0.1</mass>
 		</inertial>
@@ -207,7 +283,7 @@
 	
     </link>
 
-	<plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive_test.so">
+	<plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
 		
 		
 		<legacyMode>false</legacyMode>
