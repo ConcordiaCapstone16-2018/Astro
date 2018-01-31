@@ -2,19 +2,19 @@ ROS package for autonomous operation of Astro Toolcart.
 
 --GENERAL INSTRUCTIONS--
 
--1. run "mkdir -p ~/workspace/src"  
-1. Clone this repository in to your ~/workspace/src
-2. Run catkin_make from ~/workspace
-3. run "source ~/workspace/devel/setup.bash" (also add this to ur .bashrc)
+1. run "mkdir -p ~/workspace/src"  
+2. Clone this repository in to your ~/workspace/src
+3. Run catkin_make from ~/workspace
+4. run "source ~/workspace/devel/setup.bash" (also add this to ur .bashrc)
 
--- KEY_STROKES --
+--KEY_STROKES--
 
 1. key_strokes node must have root access to run. So, run "sudo -s" to give the shell root access. 
 
-2. key_strokes requires a python package called keyboard2. key_strokes requires a python package called keyboard  
+2. key_strokes requires a python package called keyboard  
 
-run "apt-get install python-pip"
-run "pip install keyboard"
+	run "apt-get install python-pip"
+	run "pip install keyboard"
 
 --GAZEBO INSTRUCTIONS--
 
