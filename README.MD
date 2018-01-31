@@ -1,9 +1,11 @@
 ROS package for autonomous operation of Astro Toolcart. 
 
 --GENERAL INSTRUCTIONS--
+
+-1. run "mkdir -p ~/workspace/src"  
 1. Clone this repository in to your ~/workspace/src
 2. Run catkin_make from ~/workspace
-3. run "source ~/workspace/devel/setup.bash" 
+3. run "source ~/workspace/devel/setup.bash" (also add this to ur .bashrc)
 
 -- KEY_STROKES --
 
@@ -16,17 +18,15 @@ run "pip install keyboard"
 
 --GAZEBO INSTRUCTIONS--
 
-1. You can launch gazebo with a world loaded by specifying it in the launch file for astro (located at ~/workspace/src/pack1/worlds) 
+1. You can launch gazebo with a world loaded by specifying it in the launch file for astro. 
+	You have to go to ~/workspace/src/launch/sim.launch and change the include file to your /home/YOUR_USER/workspace/src/pack1/worlds/empty_world.launch" 
 
-The launch file calls the empty_world.launch file, which takes as an argument the world you want to include.  
+2. Gazebo needs to know where to look for models and worlds. 
 
-Gazebo then needs to find the world you want to add, so you have to add the location of our  model to the GAZEBO environment variables. 
+	for example, the yellow_robot is contained in ~/workspace/src/pack1/models. So, add the following lines to your ~/.bashrc file. Ensure that you change to your home path.  
 
-	for example, the yellow_robot is contained in ~/workspace/src/pack1/models. 
-	so, add the following lines to your ~/.bashrc file. 
+	export GAZEBO_MODEL_PATH="/home/YOUR_USER/workspace/src/pack1/models"
+	export GAZEBO_RESOURCE_PATH="/home/YOUR_USER/workspace/src/pack1/worlds"
+	export GAZEBO_PLUGIN_PATH="/home/YOUR_USER/workspace/src/pack1/plugs"
 
-	export GAZEBO_MODEL_PATH="/usr/share/gazebo-7/media/models:~/workspace/src/pack1/models"
-	export GAZEBO_RESOURCE_PATH="/usr/share/gazebo-7/worlds:~/workspace/src/pack1/worlds"
-	export GAZEBO_PLUGIN_PATH="/home/colin/workspace/src/pack1/plugs
 
-2. You can insert a model in to the world by specifying that in the world.world file (located in ~/workspace/src/pack1/worlds)i
