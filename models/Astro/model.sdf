@@ -270,7 +270,7 @@
 		
 		<plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
 			<topicName>scan</topicName>
-			<frameName>yellow_robot/hokuyo_link</frameName>  	
+			<frameName>Astro/hokuyo_link</frameName>  	
 		</plugin>
 	</sensor>
 	
