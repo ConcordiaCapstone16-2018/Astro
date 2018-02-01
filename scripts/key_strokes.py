@@ -21,7 +21,7 @@ def key_strokes():
 
 	#Create a publisher object.
 	pub = rospy.Publisher('keys', String ,queue_size = 10)
-	pub2 = rospy.Publisher('yellow_robot/cmd_vel', Twist, queue_size = 10)
+	pub2 = rospy.Publisher('Astro/cmd_vel', Twist, queue_size = 10)
 	#Control the rate at which the publisher publishes
 	rate = rospy.Rate(publish_rate)
 
