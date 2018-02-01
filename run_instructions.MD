@@ -8,4 +8,4 @@ rosparam set use_sim_time true
 
 rosrun rviz rviz 
 
-rosrun gmapping slam_gmapping _odom_frame:=yellow_robot/odom _base_frame:=yellow_robot/base_link
+rosrun gmapping slam_gmapping _odom_frame:=Astro/odom _base_frame:=Astro/base_link
