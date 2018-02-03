@@ -396,7 +396,7 @@
         <plugin name="laser" filename="libRayPlugin.so" />
     		<always_on>1</always_on>
         	<update_rate>30</update_rate>
-			<visualize>true</visualize>	
+			<visualize>false</visualize>	
 		
 		<plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
 			<topicName>scan</topicName>
@@ -418,7 +418,7 @@
 		<rightJoint>right_wheel_hinge</rightJoint>
 		<wheelSeparation>.458</wheelSeparation>
 		<wheelDiameter>.12382</wheelDiameter>
-		<wheelTorque>20</wheelTorque>
+		<wheelTorque>25<wheelTorque>
 		<commandTopic>cmd_vel</commandTopic>
 		<odometryTopic>odom</odometryTopic>
 		<odometryFrame>odom</odometryFrame>
