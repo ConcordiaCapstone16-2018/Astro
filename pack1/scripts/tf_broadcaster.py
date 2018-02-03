@@ -8,11 +8,11 @@ import tf
 
 def publish():
 	br = tf.TransformBroadcaster()
-	br.sendTransform((0,0,0), 
+	br.sendTransform((0,.381,.531), 
 					tf.transformations.quaternion_from_euler(0, 0, 0),
 					rospy.Time.now(),
-					'turtlename', 
-					"world")
+					'Astro/base_link', 
+					"Astro/hokuyo_link")
 	print("Transform from base to laser published.")
 
 

@@ -10,9 +10,9 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 
 publish_rate = 30
-fwd_val = 10
-bwd_val = 5
-yaw_val = 7
+fwd_val = 2
+bwd_val = -1
+yaw_val = 2
 
 def key_strokes():
 
@@ -34,26 +34,22 @@ def key_strokes():
 		if(kb.is_pressed('up')):
 			str = 'U'
 			yaw = 0
-			vel = -fwd_val
+			vel = fwd_val
+		
 		elif(kb.is_pressed('down')):
 			str = 'D'
 			yaw = 0
-			vel = fwd_val
+			vel = bwd_val
+		
 		elif(kb.is_pressed('left')):
 			str = 'L'
-			yaw = -yaw_val
-			if(kb.is_pressed('up')):
-				vel=fwd_val
-			else:
-				vel = 0
+			yaw = yaw_val
+			vel = 0
 		
 		elif(kb.is_pressed('right')):
 			str = 'R'
-			yaw = yaw_val
-			if(kb.is_pressed('up')):
-				vel = fwd_val
-			else:
-				 vel = 0	
+			yaw = -yaw_val
+			vel = 0	
 		else:
 			str = '0'
 			yaw = 0
