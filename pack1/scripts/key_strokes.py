@@ -43,12 +43,12 @@ def key_strokes():
 		
 		elif(kb.is_pressed('left')):
 			str = 'L'
-			yaw = yaw_val
+			yaw = -yaw_val
 			vel = 0
 		
 		elif(kb.is_pressed('right')):
 			str = 'R'
-			yaw = -yaw_val
+			yaw = yaw_val
 			vel = 0	
 		else:
 			str = '0'

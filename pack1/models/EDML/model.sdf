@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <sdf version='1.6'>
-  <model name='Hall_Building_EDML_ABC'>
+  <model name='EDML'>
     <pose frame=''>1.09948 8.70405 0 0 -0 0</pose>
     <link name='Door_14'>
       <collision name='Door_14_Collision'>
