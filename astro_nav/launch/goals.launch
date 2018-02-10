@@ -20,10 +20,8 @@
 
 	<!-- TF BROADCASTER -->
 
-	<node name="static_tf_broadcaster" pkg="tf" type="static_transform_publisher" args="0 .381 .531 0 0 0 Astro/base_link Astro/hokuyo_link 100"/> 
-	<!--node name="static_tf_broadcaster_2" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 map Astro/odom 100"/-->
+	<node name="static_tf_broadcaster" pkg="tf" type="static_transform_publisher" args=".381 0 .531 0 0 0 Astro/base_link Astro/hokuyo_link 100"/> 
 	
-	<!--node name="static_tf_broadcaster_3" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 Astro/base_link base_link 100"/-->
 
 
 
@@ -42,6 +40,11 @@
 		<rosparam file="/home/colin/workspace/src/astro_nav/base_local_planner_params.yaml" command="load" />	
 
 	</node>
+
+
+	<!-- RVIZ -->
+
+	<node name="rviz" pkg="rviz" type="rviz" output="screen"/>
 	
 </launch>
 

@@ -8,7 +8,7 @@ import tf
 
 def publish():
 	br = tf.TransformBroadcaster()
-	br.sendTransform((0,.381,.531), 
+	br.sendTransform((0.381,0,.531), 
 					tf.transformations.quaternion_from_euler(0, 0, 0),
 					rospy.Time.now(),
 					'Astro/base_link', 

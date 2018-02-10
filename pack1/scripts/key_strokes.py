@@ -10,9 +10,9 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 
 publish_rate = 30
-fwd_val = 2
-bwd_val = -1
-yaw_val = 2
+fwd_vel = .5
+bwd_vel = -.5
+yaw_vel = 1
 
 def key_strokes():
 
@@ -20,8 +20,10 @@ def key_strokes():
 	rospy.init_node('key_strokes')
 
 	#Create a publisher object.
-	pub = rospy.Publisher('keys', String ,queue_size = 10)
-	pub2 = rospy.Publisher('Astro/cmd_vel', Twist, queue_size = 10)
+	pub = rospy.Publisher('keys', String ,queue_size = 1)
+	pub2 = rospy.Publisher('Astro/cmd_vel', Twist, queue_size = 1)
+	pub3 = rospy.Publisher('cmd_vel', Twist, queue_size = 1)
+
 	#Control the rate at which the publisher publishes
 	rate = rospy.Rate(publish_rate)
 
@@ -34,21 +36,25 @@ def key_strokes():
 		if(kb.is_pressed('up')):
 			str = 'U'
 			yaw = 0
-			vel = fwd_val
+			vel = fwd_vel
+			if(kb.is_pressed('left')):
+				yaw = -.5*yaw_vel;				
+			elif(kb.is_pressed('right')):
+				yaw = .5*yaw_vel;
 		
 		elif(kb.is_pressed('down')):
 			str = 'D'
 			yaw = 0
-			vel = bwd_val
+			vel = bwd_vel
 		
 		elif(kb.is_pressed('left')):
 			str = 'L'
-			yaw = -yaw_val
+			yaw = -yaw_vel
 			vel = 0
 		
 		elif(kb.is_pressed('right')):
 			str = 'R'
-			yaw = yaw_val
+			yaw = yaw_vel
 			vel = 0	
 		else:
 			str = '0'
@@ -61,10 +67,10 @@ def key_strokes():
 		# Publish it.
 		pub.publish(str)
 		pub2.publish(data)
-
+		pub3.publish(data)
 		# Print it to logger
-		rospy.loginfo(str)
-
+		# rospy.loginfo(str)
+		rospy.loginfo(data)
 		# Sleep for time required to maintain rate.
 		rate.sleep()
 

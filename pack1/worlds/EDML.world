@@ -32,7 +32,7 @@
 		<include>
 			<uri>model://EDML</uri>
 			<name>EDML</name>
-			<pose>6 0 0 0 0 0 </pose>
+			<pose>0 -6 0 0 0 0 </pose>
 		</include>
 
 	</world>
