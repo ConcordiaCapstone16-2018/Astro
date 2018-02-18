@@ -6,6 +6,7 @@ ROS package for autonomous operation of Astro Toolcart.
 2. Clone this repository in to your ~/workspace/src
 3. Run catkin_make from ~/workspace
 4. run "source ~/workspace/devel/setup.bash" (also add this to ur .bashrc)
+5. Edit launch files and make sure all the include file paths have your directory on it! In other words, open launch files and replace "colin" to your home directory name! Also fix name of catkinned workspace if need be.
 
 --KEY_STROKES--
 
