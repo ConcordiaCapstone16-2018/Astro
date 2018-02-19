@@ -1,0 +1,32 @@
+<launch>
+
+	<!-- GAZEBO NODE & WORLD -->
+
+	<include file="/home/colin/workspace/src/pack1/worlds/empty_world.launch">
+		<arg name="paused" value="true"/>	
+		<arg name="world_name" value="test_world.world"/>
+	</include>
+
+	<!-- KEYBOARD INPUT NODE -->
+
+	<node name="key_strokes" pkg="pack1" type="key_strokes.py"/>
+
+	<!-- TF BROADCASTER -->
+
+	<!--node name="tf_broadcaster" pkg="pack1" type="tf_broadcaster.py"/-->
+	<!--node name="tf_broadcaster" pkg="pack1" type="tf_broadcaster"/-->
+	<node name="static_tf_broadcaster" pkg="tf" type="static_transform_publisher" args=".381 0 .531 0 0 0 Astro/base_link Astro/hokuyo_link 100"/> 	
+	
+	<!-- SLAM MAPPING NODE -->
+
+	<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" args="_odom_frame:=Astro/odom _base_frame:=Astro/base_link"/>
+
+	<!-- LOAD STATIC MAP -->
+
+	<!--node name="map_server" pkg="map_server" type="map_server" args="/home/colin/workspace/src/pack1/maps/map.yaml"/-->
+
+	<!-- VISUALIZING STATIC MAP -->
+
+	<node name="rviz" pkg="rviz" type="rviz"/>
+
+</launch>

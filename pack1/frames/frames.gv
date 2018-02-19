@@ -1,0 +1,9 @@
+digraph G {
+"Astro/odom" -> "Astro/base_link"[label="Broadcaster: /gazebo\nAverage rate: 30.208 Hz\nMost recent transform: 832.556 ( 0.008 sec old)\nBuffer length: 4.800 sec\n"];
+"map" -> "Astro/odom"[label="Broadcaster: /amcl\nAverage rate: 29.602 Hz\nMost recent transform: 832.636 ( -0.072 sec old)\nBuffer length: 4.797 sec\n"];
+"Astro/base_link" -> "Astro/hokuyo_link"[label="Broadcaster: /static_tf_broadcaster\nAverage rate: 10.180 Hz\nMost recent transform: 832.595 ( -0.031 sec old)\nBuffer length: 4.715 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 832.564"[ shape=plaintext ] ;
+ }->"map";
+}

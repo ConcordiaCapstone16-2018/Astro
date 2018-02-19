@@ -14,7 +14,11 @@
 	<include>	
 	  <uri>model://Astro</uri>
 	  <name>Astro</name>
-	  <pose>0 0 0 0 0 0</pose>
-	</include> 
+	  <!--pose>0 0 0 0 0 0</pose-->
+	</include>
+  
+
+
+ 
  </world>
 </sdf>

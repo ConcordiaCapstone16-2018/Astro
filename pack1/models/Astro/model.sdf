@@ -11,27 +11,73 @@
 		<!--Bottom bed of cart-->
 
 			<pose> 0 0 .505 0 0 0 </pose> 
+			<inertial>
+				<pose>0 0 -.3 0 0 0 </pose>
+				<mass> 20 </mass>
+			</inertial>
 			
 
-
-			<collision name="collision">
+			<collision name="bottom_plate">
+				<pose> 0 0 -.35 0 0 0 </pose>
 				<geometry>
 					<box>
-						<size>.4572 .762 .762</size>
+          	<size>.762 .4572 .03</size>
 					</box>
-				</geometry>
+        </geometry>
 			</collision>
 
-			<visual name="visual">
+			<visual name="bottom_plate">
+				<pose> 0 0 -.35 0 0 0 </pose>
 				<geometry>
 					<box>
-          	<size>.4572 .762 .762</size>
+          	<size>.762 .4572 .03</size>
 					</box>
         </geometry>
 			</visual>
 
+
+				<collision name="lidar_pole">
+				<pose> .381 0 .381 0 0 0 </pose>
+				<geometry>
+					<box>
+						<size>.03 .03 .3</size>
+					</box>
+				</geometry>
+			</collision>
+
+			<visual name="lidar_pole">
+				<pose> .381 0 .381 0 0 0 </pose>
+				<geometry>
+					<box>
+          	<size>.03 .03 .3</size>
+					</box>
+        </geometry>
+			</visual>
+			
+
+			<collision name="top_plate">
+				<pose> 0 0 .381 0 0 0 </pose>
+				<geometry>
+					<box>
+						<size>.762 .4572 .03</size>
+					</box>
+				</geometry>
+			</collision>
+
+			<visual name="top_plate">
+				<pose> 0 0 .381 0 0 0 </pose>
+				<geometry>
+					<box>
+          	<size>.762 .4572 .03</size>
+					</box>
+        </geometry>
+			</visual>
+
+
+
+
 			<collision name="caster_collision_1">
-				<pose> -.2886 -.381 -.4 0 0 0</pose>	
+				<pose> -.3 -.2-.442 0 0 0</pose>	
 				<geometry>
 					<sphere>	
 						<radius>0.06191</radius>
@@ -50,7 +96,7 @@
 			</collision>
 
 			<visual name="caster_visual_1">
-				<pose>-.2886 -.381 -.4 0 0 0</pose> 
+				<pose>-.3 -.2 -.442 0 0 0</pose> 
 				<geometry>              
                     <sphere>
                         <radius>0.06191</radius>
@@ -61,7 +107,7 @@
 
 
 			<collision name="caster_collision_2">
-                <pose> .2886 .381 -.4 0 0 0 </pose>
+                <pose>.3 .2 -.442 0 0 0 </pose>
 								<geometry>              
                     <sphere>
                         <radius>0.06191</radius>
@@ -80,7 +126,7 @@
             </collision>
 			
 			<visual name="caster_visual_2">
-                <pose>.2886 .381 -.4 0 0 0</pose>
+                <pose>.3 .2 -.442 0 0 0</pose>
 				<geometry>
                     <sphere>
                         <radius>0.06191</radius>
@@ -90,7 +136,7 @@
 
 
 <collision name="caster_collision_3">
-                <pose>-.2886 .381 -.4 0 0 0</pose>
+                <pose>.3 -.2 -.442 0 0 0</pose>
 				<geometry>              
                     <sphere>
                         <radius>0.06191</radius>
@@ -109,7 +155,7 @@
             </collision>
 			
 			<visual name="caster_visual_3">
-                <pose>-.2886 .381 -.4 0 0 0</pose>
+                <pose>.3 -.2 -.442 0 0 0</pose>
 				<geometry>
                     <sphere>
                         <radius>0.06191</radius>
@@ -119,7 +165,7 @@
 
 
 			<collision name="caster_collision_4">
-      	<pose>.2886 -.381 -.4 0 0 0</pose>
+      	<pose>-.3 .2 -.442 0 0 0</pose>
 					<geometry>              
                     <sphere>
                         <radius>0.06191</radius>
@@ -138,7 +184,7 @@
       </collision>
 			
 			<visual name="caster_visual_4">
-                <pose>.2886 -.381 -.4 0 0 0</pose>
+                <pose>-.3 .2 -.442 0 0 0</pose>
 				<geometry>
                     <sphere>
                         <radius>0.06191</radius>
@@ -147,8 +193,88 @@
        </visual>
 
 
+		<collision name="pole1">
+				<pose>0.381 -.2286 0 0 0 0</pose>
+				<geometry>
+					<box>
+						<size>.03 .03 .762</size>
+					</box>
+				</geometry>
+			</collision>
+
+			<visual name="pole1">
+				<pose>0.381 -.2286 0 0 0 0 </pose>
+				<geometry>
+					<box>
+          	<size>.03 .03 .762</size>
+					</box>
+        </geometry>
+			</visual>
+
+<collision name="pole2">
+				<pose> 0.381 .2286 0 0 0 0 </pose>
+				<geometry>
+					<box>
+						<size>.03 .03 .762</size>
+					</box>
+				</geometry>
+			</collision>
+
+			<visual name="pole2">
+				<pose>0.381 .2286  0 0 0 0</pose>
+				<geometry>
+					<box>
+          	<size>.03 .03 .762</size>
+					</box>
+        </geometry>
+			</visual>
+
+<collision name="pole3">
+				<pose>-0.381 .2286  0 0 0 0 </pose>
+				<geometry>
+					<box>
+						<size>.03 .03 .762</size>
+					</box>
+				</geometry>
+			</collision>
+
+			<visual name="pole3">
+				<pose>-0.381 .2286  0 0 0 0</pose>
+				<geometry>
+					<box>
+          	<size>.03 .03 .762</size>
+					</box>
+        </geometry>
+			</visual>
+
+
+<collision name="pole4">
+				<pose>-0.381 .2286  0 0 0 0 </pose>
+				<geometry>
+					<box>
+						<size>.03 .03 .762</size>
+					</box>
+				</geometry>
+			</collision>
+
+			<visual name="pole4">
+				<pose>-0.381 -.2286  0 0 0 0</pose>
+				<geometry>
+					<box>
+          	<size>.03 .03 .762</size>
+					</box>
+        </geometry>
+			</visual>
+
+
 
 		</link>
+
+	
+
+		
+
+
 
 
 
@@ -160,8 +286,10 @@
 
 		<link name="left_wheel">
 			
-			<pose> -.2 0 .06191 0 1.57 0 </pose>
-			
+			<pose>0 -.2  .061 0 1.57 1.57 </pose>
+			<inertial>
+				<mass>0.5</mass>
+			</inertial>
 			<collision name="collision">
                 <geometry>
                     <cylinder>
@@ -184,8 +312,10 @@
 
 		<link name="right_wheel">
 
-            <pose> .2 0 .06191 0 1.57 0 </pose>
-
+            <pose>0 .2 .061 0 1.57 1.57 </pose>
+						<inertial>
+							<mass>0.5</mass>
+						</inertial>
             <collision name="collision">
                 <geometry>
                     <cylinder>
@@ -211,7 +341,7 @@
 			<child>left_wheel</child>
 			<parent>base_link</parent>
 			<axis>
-				<xyz> 1 0 0 </xyz>
+				<xyz> 0 1 0 </xyz>
 			</axis>
 		</joint>
 
@@ -220,7 +350,7 @@
             <child>right_wheel</child>
             <parent>base_link</parent>
             <axis>
-                <xyz> 1 0 0 </xyz>
+                <xyz> 0 1 0 </xyz>
             </axis>
         </joint>
 
@@ -232,7 +362,7 @@
 
 
 	<link name="hokuyo_link">
-		<pose>0 1 .65 0 0 1.57</pose>
+		<pose>.381 0 1.036 0 0 0</pose>
 		<inertial>
 			<mass>0.1</mass>
 		</inertial>
@@ -245,20 +375,20 @@
         	</geometry>
      	 </visual>
     
-	<sensor name="head_hokuyo_sensor" type="ray">
+		<sensor name="head_hokuyo_sensor" type="ray">
         <pose>0 0 0 0 0 0</pose>
         <ray>
           <scan>
             <horizontal>
-              <samples>640</samples>
+              <samples>200</samples>
               <resolution>1</resolution>
-              <min_angle>-3.14159</min_angle>
-              <max_angle>3.14159</max_angle>
+              <min_angle>-3.1</min_angle>
+              <max_angle>3.1</max_angle>
             </horizontal>
           </scan>
           <range>
             <min>0.08</min>
-            <max>10</max>
+            <max>4</max>
             <resolution>0.01</resolution>
           </range>
         </ray>
@@ -266,35 +396,46 @@
         <plugin name="laser" filename="libRayPlugin.so" />
     		<always_on>1</always_on>
         	<update_rate>30</update_rate>
-			<visualize>true</visualize>	
+				<visualize>true</visualize>	
 		
-		<plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
-			<topicName>scan</topicName>
-			<frameName>Astro/hokuyo_link</frameName>  	
-		</plugin>
-	</sensor>
-	
-    </link>
+				<plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+					<topicName>scan</topicName>
+					<frameName>Astro/hokuyo_link</frameName>  	
+				</plugin>
+		</sensor>	
+
+	 </link>
 
 	<plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
 		
-		
-		<legacyMode>false</legacyMode>
-		<tf_prefix></tf_prefix>
-		<robotNamespace></robotNamespace>
-		<alwaysOn>true</alwaysOn>
-		<updateRate>30</updateRate>
-		<leftJoint>left_wheel_hinge</leftJoint>
-		<rightJoint>right_wheel_hinge</rightJoint>
-		<wheelSeparation>2</wheelSeparation>
-		<wheelDiameter>1</wheelDiameter>
-		<wheelTorque>5</wheelTorque>
-		<commandTopic>cmd_vel</commandTopic>
-		<odometryTopic>odom</odometryTopic>
-		<odometryFrame>odom</odometryFrame>
-		<robotBaseFrame>base_link</robotBaseFrame>
-	</plugin>	
 
+		<legacyMode>true</legacyMode>
+			
+		<alwaysOn>true</alwaysOn>
+		
+		<updateRate>30</updateRate>
+
+		<leftJoint>left_wheel_hinge</leftJoint>
+
+		<rightJoint>right_wheel_hinge</rightJoint>
+
+		<wheelSeparation>.4</wheelSeparation>
+		
+		<wheelDiameter>.12382</wheelDiameter>
+		
+		<wheelTorque>15</wheelTorque>
+			
+		<commandTopic>/cmd_vel</commandTopic>
+		
+		<odometryTopic>odom</odometryTopic>
 	
-	</model>
+		<odometryFrame>odom</odometryFrame>
+		
+		<robotBaseFrame>base_link</robotBaseFrame>
+		
+
+
+
+	</plugin>	
+</model>
 </sdf>
