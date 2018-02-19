@@ -1,10 +1,16 @@
 <launch>
-
 	<node name="key_strokes" pkg="pack1" type="key_strokes.py"/>
+  
+	
+
+
 	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
-		<param name="port" value="/dev/ttyUSB0"/>
-		<param name="baud" value="9600"/>
+		<param name="port" value="/dev/ttyUSB2"/>
 	</node>
+
+
+
+	<node name="debug" pkg="rqt_console" type="rqt_console"/>
 
 </launch>
 
