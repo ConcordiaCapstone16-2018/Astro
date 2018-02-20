@@ -1,13 +1,13 @@
+// -------- INCLUDE STATEMENTS --------
 #include <ros.h>
 #include <std_msgs/String.h>
-
 // The cmd_vel topic is a Twist message so you need to import that object 
 // Twist msg is two Vector3 objects: LINEAR x y z, ANGULAR roll pitch yaw
 #include <std_msgs/Int16.h>
 #include <geometry_msgs/Twist.h>
 
+// -------- DEFINE STATEMENTS AND GLOBAL VARIABLES --------
 #define BIT(a) (1<<(a)) // turns on the specified bit within that register
-#define MAX_VOLT (0.5)
 
 // Right motor
 #define R_MOT (10)
@@ -43,7 +43,7 @@ int cmp_count = 0;
 
 // Period of one control loop iteration = dt
 
-#define dt (MS_PER_CMP*N_CMP*0.001)
+double dt = (MS_PER_CMP*N_CMP*0.001);
 
 double v_lin;
 double input_r_rpm;
@@ -96,9 +96,16 @@ void messageCb(const geometry_msgs::Twist& cmd_vel){
   if(cmd_vel_yaw==1.0 || cmd_vel_yaw==-1.0) nh.loginfo("yawing");
 }
 
+
+
 // necessary ros object. Need one for each topic you want to subscribe to
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_subscriber("cmd_vel", &messageCb );
 
+std_msgs::Int16 r_counts;
+std_msgs::Int16 l_counts;
+
+ros::Publisher pub_ticks_r("r_ticks", &r_counts);
+ros::Publisher pub_ticks_l("l_ticks", &l_counts);
 
 void setup() {
 
@@ -107,6 +114,8 @@ void setup() {
 
   // Attach the subscriber object to the node handle
   nh.subscribe(cmd_vel_subscriber);  
+  nh.advertise(pub_ticks_r);
+  nh.advertise(pub_ticks_l);
   
   // Configure pins.   
   pinMode(13,OUTPUT);
@@ -140,7 +149,7 @@ void setup() {
  
   // To do: Incorporate Serial Communication  
   
-  Serial.begin(57600);
+  //Serial.begin(57600);
 
 }
 
@@ -153,39 +162,21 @@ void loop() {
   
   
 // 1. RECEIVE COMMAND (INPUT)
+// 155 is the conversion between m/s and RPM for 0.06191m radius wheels
 
+input_r_rpm = cmd_vel_x * 155;
+input_l_rpm = cmd_vel_x * 155;
 
-//  todo: add dan's code for joystick. 
-//  todo: receive commands from computer. 
-//  todo: incorporate kinematic equations (rpm_r and l based on R and Vlin)
-
-  //  a. Inputs from the serial monitor. 
-
-  
-  
-  
-
-
-  //  b. Constant inputs.   
-
-  ratio = 1;  // Left and right motors go at same speed
-  v_lin = 50;  // Desired linear velocity. 
-
-  if(Serial.available()>0){
-    input_r_rpm =  Serial.parseInt();
-    
-  }
-  input_l_rpm = input_r_rpm;
-
-  //input_r_rpm = v_lin;
-  //input_l_rpm = v_lin;
   
 
   
 // 2. READ SENSOR (OUTPUT)
 
-  r_rpm = 60*(r_ticks/TICKS_REV_R) / dt;
-  l_rpm = 60*(l_ticks/TICKS_REV_L) / dt;
+  r_rpm = 60*(r_ticks/(double)TICKS_REV_R) / dt;
+  l_rpm = 60*(l_ticks/(double)TICKS_REV_L) / dt;
+  r_counts.data = r_rpm*100;
+  l_counts.data = r_ticks;
+  
   r_ticks = 0; //reset tick counts  
   l_ticks = 0;
 
@@ -217,21 +208,18 @@ void loop() {
   // Convert from rpm to PWM
   // Assume a maximum allowed 100 rpm to map to 255 PWM
 
-  u_r_pwm = u_r_rpm*2.55;
-  u_l_pwm = u_l_rpm*2.55;
-
   // Saturate Inputs 
 
-  if(u_r_pwm > 255) u_r_pwm = 255; 
-  if(u_l_pwm > 255) u_l_pwm = 255; 
+  if(u_r_rpm > 255) u_r_pwm = 255; 
+  if(u_l_rpm > 255) u_l_pwm = 255; 
   
   
   
 // 5. WRITE ACTUATORS WITH CONTROL SIGNAL
              
-  analogWrite(L_MOT,u_l_pwm);
-  analogWrite(R_MOT,u_r_pwm);
-  //analogWrite(L_MOT,u_l_pwm);
+  analogWrite(L_MOT,u_l_rpm);
+  analogWrite(R_MOT,u_r_rpm);
+  //analogWrite(L_MOT,u_l_rpm);
 
 
   
@@ -240,15 +228,16 @@ void loop() {
   //Serial.print(u_r);
   //Serial.print("  ");
   //Serial.println(r_rpm);
-  Serial.print("error: ");
-  Serial.print(u_r_rpm);
-  Serial.print("   r_rpm: ");
-  Serial.print(r_rpm);
-  Serial.println();
+  //Serial.print("error: ");
+  //Serial.print(u_r_rpm);
+  //Serial.print("   r_rpm: ");
+  //Serial.print(r_rpm);
+  //Serial.println();
   cs_start = false; 
 
 // 7. ROS SPIN
-
+  pub_ticks_r.publish(&r_counts);
+  pub_ticks_l.publish(&l_counts);
   nh.spinOnce();
 
 }
