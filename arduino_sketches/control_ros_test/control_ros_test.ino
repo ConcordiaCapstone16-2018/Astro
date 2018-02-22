@@ -52,9 +52,11 @@ double input_l_rpm;
 
 // Control signals
 int u_r_prop, u_r_int, u_r_der, u_l_prop, u_l_int, u_l_der; // PID terms
-int e_r,u_r,e_l,u_l; //error and control signals
-int e_r_prev = 0; //save previous error for derivative control
-int e_l_prev = 0;
+int e_r=0; // error signals
+int e_l=0;
+int u_r,u_l; // control signals
+int e_r_prev; //save previous error for derivative control
+int e_l_prev;
 double kp=20; // proportional term gain
 double ki=3; // integral term constant
 double kd=0; // derivative term constant
@@ -187,12 +189,14 @@ void loop() {
   
 //  3. COMPUTE ERROR SIGNAL (E = INPUT - OUTPUT)
 
+  // Save previous error. First iteration of the loop starts at e_r = e_l = 0.
+  e_r_prev = e_r;
+  e_l_prev = e_l;
+
+  // Compute current error
   e_r = (input_r_rpm - r_rpm);
   e_l = (input_l_rpm - l_rpm);
   
-  // Save previous error
-  e_r_prev = e_r;
-  e_l_prev = e_l;
   
 //  4. COMPUTE CONTROL SIGNAL (U)
 //  
