@@ -45,12 +45,19 @@ int cmp_count = 0;
 
 double dt = (MS_PER_CMP*N_CMP*0.001);
 
-double v_lin;
+float turning_radius = 0.2286; // for yaw rates, etc.
+
 double input_r_rpm;
 double input_l_rpm;
-double ratio;
-int e_r,u_r_rpm,u_r_pwm ,e_l,u_l_rpm,u_l_pwm; //error and control signals
-double kp=20; //proportional term gain
+
+// Control signals
+int u_r_prop, u_r_int, u_r_der, u_l_prop, u_l_int, u_l_der; // PID terms
+int e_r,u_r,e_l,u_l; //error and control signals
+int e_r_prev = 0; //save previous error for derivative control
+int e_l_prev = 0;
+double kp=20; // proportional term gain
+double ki=3; // integral term constant
+double kd=0; // derivative term constant
 
 // Feedback variables
 
@@ -158,16 +165,13 @@ void loop() {
   while(!cs_start){waste++;} 
   
 
-// CONTROL LOOP BEGINS HERE (EVERY dt = n_cmp*ms_per_cmp ms)            
+// CONTROL LOOP BEGINS HERE (EVERY dt = n_cmp*ms_per_cmp)            
   
   
 // 1. RECEIVE COMMAND (INPUT)
-// 155 is the conversion between m/s and RPM for 0.06191m radius wheels
 
-input_r_rpm = cmd_vel_x * 155;
-input_l_rpm = cmd_vel_x * 155;
-
-  
+    input_r_rpm = cmd_vel_x * 155 + cmd_vel_yaw * 35.2604; // 155 is the conversion between m/s and RPM for 0.06191m radius wheels
+    input_l_rpm = cmd_vel_x * 155 + cmd_vel_yaw * 35.2604; // 35.2604 is the conversion rate between rad/s of yaw to RPM of wheels (takes into account turning radius of cart and radius of wheels.
 
   
 // 2. READ SENSOR (OUTPUT)
@@ -180,14 +184,15 @@ input_l_rpm = cmd_vel_x * 155;
   r_ticks = 0; //reset tick counts  
   l_ticks = 0;
 
-
   
 //  3. COMPUTE ERROR SIGNAL (E = INPUT - OUTPUT)
 
   e_r = (input_r_rpm - r_rpm);
   e_l = (input_l_rpm - l_rpm);
   
-  
+  // Save previous error
+  e_r_prev = e_r;
+  e_l_prev = e_l;
   
 //  4. COMPUTE CONTROL SIGNAL (U)
 //  
@@ -202,24 +207,35 @@ input_l_rpm = cmd_vel_x * 155;
   if(e_l < 0) set_l_mot(0); 
   else set_l_mot(1);
 
-  u_r_rpm = kp*abs(e_r);
-  u_l_rpm = kp*abs(e_l);
+  // Proportional control term
+  u_r_prop = kp*abs(e_r);
+  u_l_prop = kp*abs(e_l);
 
-  // Convert from rpm to PWM
-  // Assume a maximum allowed 100 rpm to map to 255 PWM
+  // Integral control term
+  u_r_int = ki*e_r*dt;
+  u_l_int = ki*e_l*dt;
+
+  // Derivative control term
+  u_r_der = kd*(e_r - e_r_prev)/dt;
+  u_l_der = kd*(e_l - e_l_prev)/dt;
+
+  
+  // PID Control Implementation: U(t) = Kp*E(t) + Ki*E(t)*dt + Kd*(E(t) - Eprev(t)/dt
+  u_r = u_r_prop + u_r_int + u_r_der;
+  u_l = u_l_prop + u_l_int + u_l_int;
 
   // Saturate Inputs 
 
-  if(u_r_rpm > 255) u_r_pwm = 255; 
-  if(u_l_rpm > 255) u_l_pwm = 255; 
+  if(u_r > 255) u_r = 255; 
+  if(u_l > 255) u_l = 255; 
   
   
   
 // 5. WRITE ACTUATORS WITH CONTROL SIGNAL
              
-  analogWrite(L_MOT,u_l_rpm);
-  analogWrite(R_MOT,u_r_rpm);
-  //analogWrite(L_MOT,u_l_rpm);
+  analogWrite(L_MOT,u_l);
+  analogWrite(R_MOT,u_r);
+  //analogWrite(L_MOT,u_l);
 
 
   
@@ -229,7 +245,7 @@ input_l_rpm = cmd_vel_x * 155;
   //Serial.print("  ");
   //Serial.println(r_rpm);
   //Serial.print("error: ");
-  //Serial.print(u_r_rpm);
+  //Serial.print(e_r);
   //Serial.print("   r_rpm: ");
   //Serial.print(r_rpm);
   //Serial.println();
