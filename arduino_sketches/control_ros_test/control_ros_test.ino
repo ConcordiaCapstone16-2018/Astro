@@ -1,10 +1,13 @@
 // -------- INCLUDE STATEMENTS --------
 #include <ros.h>
 #include <std_msgs/String.h>
+#include <ros/time.h>
 // The cmd_vel topic is a Twist message so you need to import that object 
 // Twist msg is two Vector3 objects: LINEAR x y z, ANGULAR roll pitch yaw
 #include <std_msgs/Int16.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/Float32.h>
+
 
 // -------- DEFINE STATEMENTS AND GLOBAL VARIABLES --------
 #define BIT(a) (1<<(a)) // turns on the specified bit within that register
@@ -51,31 +54,23 @@ double input_r_rpm;
 double input_l_rpm;
 
 // Control signals
-int u_r_prop, u_r_int, u_r_der, u_l_prop, u_l_int, u_l_der; // PID terms
-int e_r=0; // error signals
-int e_l=0;
-int u_r,u_l; // control signals
-int e_r_prev; //save previous error for derivative control
-int e_l_prev;
+double u_r_prop, u_r_der, u_l_prop, u_l_der; // Terms for PD part of PID controller (Integral term initialized statically within loop)
+//double e_r; // error signals
+//double e_l;
+//double u_r = 0;
+//double u_l = 0; // control signals
+double e_r_prev; //save previous error for derivative control
+double e_l_prev;
 double kp=20; // proportional term gain
-double ki=3; // integral term constant
-double kd=0; // derivative term constant
+double ki=0; // integral term constant
+double kd=0; // derivative term constant-
 
 // Feedback variables
 
-double r_rpm; 
-double l_rpm; 
+double r_rpm = 0; 
+double l_rpm = 0; 
 volatile int r_ticks = 0;
 volatile int l_ticks = 0;
-
-// Testing variables
-
-int delay_s;
-int target;
-int iter;
-int targit;
-
-int PWM;
 
 
 // ROS Communication
@@ -83,8 +78,8 @@ int PWM;
 ros::NodeHandle nh;
 
 // The cmd_vel Twist message will be unpacked in to these variables
-double cmd_vel_x;
-double cmd_vel_yaw;
+volatile double cmd_vel_x;
+volatile double cmd_vel_yaw;
 
 // This function gets executed each time a new message is published
 // to the cmd_vel topic.   
@@ -94,27 +89,22 @@ void messageCb(const geometry_msgs::Twist& cmd_vel){
   cmd_vel_x = cmd_vel.linear.x;
   cmd_vel_yaw = cmd_vel.angular.z;
   
-  if(cmd_vel_x==0.5){
-    // Toggle the LED if robot's going forward. 
-    digitalWrite(13, HIGH-digitalRead(13));  // blink the led
-  }
-
-  // For debugging purposes
-  if(cmd_vel_x==0.5) nh.loginfo("UP");
-  if(cmd_vel_x==-0.5) nh.loginfo("DOWN");  
-  if(cmd_vel_yaw==1.0 || cmd_vel_yaw==-1.0) nh.loginfo("yawing");
 }
-
 
 
 // necessary ros object. Need one for each topic you want to subscribe to
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_subscriber("cmd_vel", &messageCb );
 
-std_msgs::Int16 r_counts;
-std_msgs::Int16 l_counts;
+std_msgs::Float32 a;
+std_msgs::Float32 b;
+std_msgs::Float32 c;
+std_msgs::Float32 d;
 
-ros::Publisher pub_ticks_r("r_ticks", &r_counts);
-ros::Publisher pub_ticks_l("l_ticks", &l_counts);
+ros::Publisher pub_a("target_rpm", &a);
+ros::Publisher pub_b("error_signal", &b);
+ros::Publisher pub_c("control_signal", &c);
+ros::Publisher pub_d("real_rpm", &d);
+
 
 void setup() {
 
@@ -123,19 +113,23 @@ void setup() {
 
   // Attach the subscriber object to the node handle
   nh.subscribe(cmd_vel_subscriber);  
-  nh.advertise(pub_ticks_r);
-  nh.advertise(pub_ticks_l);
+  nh.advertise(pub_a);
+  nh.advertise(pub_d);
+  nh.advertise(pub_b);
+  nh.advertise(pub_c);
   
-  // Configure pins.   
+  // Configure pins.  
   pinMode(13,OUTPUT);
   pinMode(R_MOT,OUTPUT);
   pinMode(R_D1,OUTPUT);
   pinMode(R_D2,OUTPUT);
-  pinMode(R_ENC,INPUT_PULLUP);   
+  pinMode(R_ENC,INPUT_PULLUP);  
+  pinMode(R_ENC2,INPUT_PULLUP); 
   pinMode(L_MOT,OUTPUT);
   pinMode(L_D1,OUTPUT);
   pinMode(L_D2,OUTPUT);
   pinMode(L_ENC,INPUT_PULLUP);
+  pinMode(L_ENC1,INPUT_PULLUP);
   set_direction(0);
 
   // SET TIMER REGISTERS 
@@ -150,7 +144,7 @@ void setup() {
   
   
   // Set external interrupt registers
-  // enable interrupts on puns 2 and 3
+  // enable interrupts on pins 2 and 3
   
   EIMSK = 0;
   EIMSK = BIT(INT0) | BIT(INT1); 
@@ -172,31 +166,33 @@ void loop() {
   
 // 1. RECEIVE COMMAND (INPUT)
 
-    input_r_rpm = cmd_vel_x * 155 + cmd_vel_yaw * 35.2604; // 155 is the conversion between m/s and RPM for 0.06191m radius wheels
-    input_l_rpm = cmd_vel_x * 155 + cmd_vel_yaw * 35.2604; // 35.2604 is the conversion rate between rad/s of yaw to RPM of wheels (takes into account turning radius of cart and radius of wheels.
-
+   input_r_rpm = cmd_vel_x * 155 + cmd_vel_yaw * 35.2604; // 155 is the conversion between m/s and RPM for 0.06191m radius wheels
+   input_l_rpm = cmd_vel_x * 155 - cmd_vel_yaw * 35.2604; // 35.2604 is the conversion rate between rad/s of yaw to RPM of wheels (takes into account turning radius of cart and radius of wheels.
+  
   
 // 2. READ SENSOR (OUTPUT)
 
   r_rpm = 60*(r_ticks/(double)TICKS_REV_R) / dt;
   l_rpm = 60*(l_ticks/(double)TICKS_REV_L) / dt;
-  r_counts.data = r_rpm*100;
-  l_counts.data = r_ticks;
   
+  a.data = input_r_rpm;
+  
+  d.data = r_rpm;
   r_ticks = 0; //reset tick counts  
   l_ticks = 0;
 
   
 //  3. COMPUTE ERROR SIGNAL (E = INPUT - OUTPUT)
-
+  static double e_r = 0;
+  static double e_l = 0;
   // Save previous error. First iteration of the loop starts at e_r = e_l = 0.
   e_r_prev = e_r;
   e_l_prev = e_l;
 
   // Compute current error
-  e_r = (input_r_rpm - r_rpm);
-  e_l = (input_l_rpm - l_rpm);
-  
+  e_r = input_r_rpm - r_rpm;
+  e_l = input_l_rpm - l_rpm;
+  b.data = e_r;
   
 //  4. COMPUTE CONTROL SIGNAL (U)
 //  
@@ -216,15 +212,21 @@ void loop() {
   u_l_prop = kp*abs(e_l);
 
   // Integral control term
-  u_r_int = ki*e_r*dt;
-  u_l_int = ki*e_l*dt;
-
+  static double u_r_int = 0;
+  static double u_l_int = 0;
+  
+  u_r_int += ki*e_r*dt;
+  u_l_int += ki*e_l*dt;
+  
   // Derivative control term
   u_r_der = kd*(e_r - e_r_prev)/dt;
   u_l_der = kd*(e_l - e_l_prev)/dt;
 
   
   // PID Control Implementation: U(t) = Kp*E(t) + Ki*E(t)*dt + Kd*(E(t) - Eprev(t)/dt
+  static double u_r = 0;
+  static double u_l = 0; // control signals
+  
   u_r = u_r_prop + u_r_int + u_r_der;
   u_l = u_l_prop + u_l_int + u_l_int;
 
@@ -232,8 +234,9 @@ void loop() {
 
   if(u_r > 255) u_r = 255; 
   if(u_l > 255) u_l = 255; 
-  
-  
+  if(u_r < 0) u_r = 0;
+  if(u_l < 0) u_l = 0;
+  c.data = u_r;
   
 // 5. WRITE ACTUATORS WITH CONTROL SIGNAL
              
@@ -256,8 +259,10 @@ void loop() {
   cs_start = false; 
 
 // 7. ROS SPIN
-  pub_ticks_r.publish(&r_counts);
-  pub_ticks_l.publish(&l_counts);
+  pub_a.publish(&a);
+  pub_b.publish(&b);
+  pub_c.publish(&c);
+  pub_d.publish(&d);
   nh.spinOnce();
 
 }
@@ -266,11 +271,15 @@ void loop() {
 // INTERRUPT ROUTINES
 
 ISR(INT0_vect){
-  l_ticks++;
+  if(digitalRead(L_ENC1)==HIGH){
+    l_ticks++;
+  } else l_ticks--;
 }
 
 ISR(INT1_vect){
-  r_ticks++;
+  if(digitalRead(R_ENC2)==HIGH){
+    r_ticks++;
+  } else r_ticks--;
 }
 
 
@@ -344,4 +353,5 @@ void set_direction(int dir){
    }
 }
 
-
+// TODO:
+// Test control system (Integral, Derivative, etc.)
