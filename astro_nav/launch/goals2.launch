@@ -2,7 +2,7 @@
 
 	<!-- GAZEBO PUBLISHES SENSOR & ODOM INFO -->
 
-	<include file="/home/colin/workspace/src/pack1/worlds/empty_world.launch">
+	<include file="$(find pack1)/worlds/empty_world.launch">
 		<arg name="paused" value="true"/>	
 		<arg name="world_name" value="test_world2.world"/>
 	</include>
@@ -10,7 +10,7 @@
 
 	<!-- MAP_SERVER -->
 
-	<node name="map_server" pkg="map_server" type="map_server" args="/home/colin/workspace/src/pack1/maps/map.yaml"/>
+	<node name="map_server" pkg="map_server" type="map_server" args="$(find pack1)/maps/test_world.yaml"/>
 
 
 	<!-- AMCL node -->
@@ -29,15 +29,15 @@
 
 	<!--node name="move_base" pkg="move_base" type="move_base" respawn="false" output="screen">
 
-		<rosparam file="/home/colin/workspace/src/astro_nav/costmap_common_params.yaml" command="load" ns="global_costmap" />
+		<rosparam file="$(find astro_nav)/costmap_common_params.yaml" command="load" ns="global_costmap" />
 
-		<rosparam file="/home/colin/workspace/src/astro_nav/costmap_common_params.yaml" command="load" ns="local_costmap" />
+		<rosparam file="$(find astro_nav)/costmap_common_params.yaml" command="load" ns="local_costmap" />
 
-		<rosparam file="/home/colin/workspace/src/astro_nav/local_costmap_params.yaml" command="load" />
+		<rosparam file="$(find astro_nav)/local_costmap_params.yaml" command="load" />
 
-		<rosparam file="/home/colin/workspace/src/astro_nav/global_costmap_params.yaml" command="load" />
+		<rosparam file="$(find astro_nav)/global_costmap_params.yaml" command="load" />
 
-		<rosparam file="/home/colin/workspace/src/astro_nav/base_local_planner_params.yaml" command="load" />	
+		<rosparam file="$(find astro_nav)/base_local_planner_params.yaml" command="load" />	
 
 	</node-->
 

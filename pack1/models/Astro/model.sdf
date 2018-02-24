@@ -388,7 +388,7 @@
           </scan>
           <range>
             <min>0.08</min>
-            <max>4</max>
+            <max>6</max>
             <resolution>0.01</resolution>
           </range>
         </ray>
@@ -405,6 +405,8 @@
 		</sensor>	
 
 	 </link>
+
+
 
 	<plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
 		
@@ -433,9 +435,8 @@
 		
 		<robotBaseFrame>base_link</robotBaseFrame>
 		
-
-
-
 	</plugin>	
+
+
 </model>
 </sdf>

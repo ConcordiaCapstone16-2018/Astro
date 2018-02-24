@@ -2,7 +2,7 @@
 
 	<!-- GAZEBO NODE -->
 
-	<include file="/home/colin/workspace/src/pack1/worlds/empty_world.launch">
+	<include file="$(find pack1)/worlds/empty_world.launch">
 		<arg name="paused" value="true"/>	
 		<arg name="world_name" value="test_world2.world"/>
 	</include>
@@ -23,7 +23,7 @@
 	
 	<!-- SLAM MAPPING  NODE -->
 
-	<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" args="_odom_frame:=Astro/odom _base_frame:=Astro/base_link"/>
+	<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" args="_odom_frame:=Astro/odom _base_frame:=Astro/base_link _maxRange:=6.1 _maxUrange:=5.9" />
 
 
 	<!-- VISUALIZING NODE -->
