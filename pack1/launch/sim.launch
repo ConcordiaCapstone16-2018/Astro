@@ -2,7 +2,7 @@
 
 	<!-- GAZEBO NODE -->
 
-	<include file="/home/colin/workspace/src/pack1/worlds/empty_world.launch">
+	<include file="$(find pack1)/worlds/empty_world.launch">
 		<arg name="paused" value="true"/>	
 		<arg name="world_name" value="room.world"/>
 	</include>

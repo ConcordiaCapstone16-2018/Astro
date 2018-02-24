@@ -3,7 +3,7 @@
 
 	<!-- GAZEBO PUBLISHES SENSOR & ODOM INFO -->
 
-	<include file="/home/colin/workspace/src/pack1/worlds/empty_world.launch">
+	<include file="$(find pack1)/worlds/empty_world.launch">
 		<arg name="paused" value="true"/>	
 		<arg name="world_name" value="test_world.world"/>
 	</include>
@@ -11,7 +11,7 @@
 
 	<!-- MAP_SERVER -->
 
-	<node name="map_server" pkg="map_server" type="map_server" args="/home/colin/workspace/src/pack1/maps/map.yaml"/>
+	<node name="map_server" pkg="map_server" type="map_server" args="$(find pack1)/maps/map.yaml"/>
 
 
 	<!-- AMCL node -->
