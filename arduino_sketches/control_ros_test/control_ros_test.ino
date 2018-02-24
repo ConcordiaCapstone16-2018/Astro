@@ -61,8 +61,8 @@ double u_r_prop, u_r_der, u_l_prop, u_l_der; // Terms for PD part of PID control
 //double u_l = 0; // control signals
 double e_r_prev; //save previous error for derivative control
 double e_l_prev;
-double kp=20; // proportional term gain
-double ki=0; // integral term constant
+double kp=5; // proportional term gain
+double ki=1; // integral term constant
 double kd=0; // derivative term constant-
 
 // Feedback variables
@@ -228,7 +228,7 @@ void loop() {
   static double u_l = 0; // control signals
   
   u_r = u_r_prop + u_r_int + u_r_der;
-  u_l = u_l_prop + u_l_int + u_l_int;
+  u_l = u_l_prop + u_l_int + u_l_der;
 
   // Saturate Inputs 
 
