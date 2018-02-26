@@ -1,5 +1,5 @@
 <launch>
-	<node name="key_strokes" pkg="pack1" type="key_strokes.py"/>
+	<!--node name="key_strokes" pkg="pack1" type="key_strokes.py"/-->
   
 	<node name="cmd_vel_publisher" pkg="pack1" type="cmd_vel_publisher.py" output="screen" launch-prefix="xterm -e"/>
 
