@@ -1,0 +1,16 @@
+<launch>
+
+  
+	<node name="cmd_vel_publisher" pkg="pack1" type="cmd_vel_publisher.py" output="screen" launch-prefix="xterm -e"/>
+
+
+	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
+		<param name="port" value="/dev/ttyUSB0"/>
+	</node>
+
+
+	
+	<node name="debug" pkg="rqt_plot" type="rqt_plot"/>
+
+</launch>
+

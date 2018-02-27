@@ -7,7 +7,7 @@
 #include <std_msgs/Int16.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Float32.h>
-
+#include <custom_msgs/ticks.h>
 
 // -------- DEFINE STATEMENTS AND GLOBAL VARIABLES --------
 #define BIT(a) (1<<(a)) // turns on the specified bit within that register
