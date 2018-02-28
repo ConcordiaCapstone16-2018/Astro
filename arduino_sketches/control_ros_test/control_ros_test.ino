@@ -4,9 +4,7 @@
 #include <ros/time.h>
 // The cmd_vel topic is a Twist message so you need to import that object 
 // Twist msg is two Vector3 objects: LINEAR x y z, ANGULAR roll pitch yaw
-#include <std_msgs/Int16.h>
 #include <geometry_msgs/Twist.h>
-#include <std_msgs/Float32.h>
 #include <custom_msgs/ticks.h>
 
 // -------- DEFINE STATEMENTS AND GLOBAL VARIABLES --------
@@ -46,23 +44,24 @@ int cmp_count = 0;
 
 // Period of one control loop iteration = dt
 
-double dt = (MS_PER_CMP*N_CMP*0.001);
+float dt = (MS_PER_CMP*N_CMP*0.001);
 
 float turning_radius = 0.2286; // for yaw rates, etc.
 
-double input_r_rpm;
-double input_l_rpm;
+float input_r_rpm;
+float input_l_rpm;
 
 // Control signals
 double u_r_prop, u_r_der, u_l_prop, u_l_der; // Terms for PD part of PID controller (Integral term initialized statically within loop)
-//double e_r; // error signals
-//double e_l;
-//double u_r = 0;
-//double u_l = 0; // control signals
+double e_r = 0; // error signals
+double e_l = 0;
+double u_r = 0;
+double u_l = 0; // control signals
+
 double e_r_prev; //save previous error for derivative control
 double e_l_prev;
 double kp=5; // proportional term gain
-double ki=1; // integral term constant
+double ki=0.5; // integral term constant
 double kd=0; // derivative term constant-
 
 // Feedback variables
@@ -76,7 +75,7 @@ volatile int l_ticks = 0;
 // ROS Communication
 
 ros::NodeHandle nh;
-
+ros::Time t1,t2,t3;
 // The cmd_vel Twist message will be unpacked in to these variables
 volatile double cmd_vel_x;
 volatile double cmd_vel_yaw;
@@ -95,28 +94,20 @@ void messageCb(const geometry_msgs::Twist& cmd_vel){
 // necessary ros object. Need one for each topic you want to subscribe to
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_subscriber("cmd_vel", &messageCb );
 
-std_msgs::Float32 a;
-std_msgs::Float32 b;
-std_msgs::Float32 c;
-std_msgs::Float32 d;
+custom_msgs::ticks e;
 
-ros::Publisher pub_a("target_rpm", &a);
-ros::Publisher pub_b("error_signal", &b);
-ros::Publisher pub_c("control_signal", &c);
-ros::Publisher pub_d("real_rpm", &d);
-
+ros::Publisher pub_ticks("ticks", &e);
 
 void setup() {
 
   // ROS communication initialization
   nh.initNode();
-
+  t1 = nh.now();
+  t2 = nh.now();
+  t3 = nh.now();
   // Attach the subscriber object to the node handle
   nh.subscribe(cmd_vel_subscriber);  
-  nh.advertise(pub_a);
-  nh.advertise(pub_d);
-  nh.advertise(pub_b);
-  nh.advertise(pub_c);
+  nh.advertise(pub_ticks);
   
   // Configure pins.  
   pinMode(13,OUTPUT);
@@ -166,8 +157,9 @@ void loop() {
   
 // 1. RECEIVE COMMAND (INPUT)
 
-   input_r_rpm = cmd_vel_x * 155 + cmd_vel_yaw * 35.2604; // 155 is the conversion between m/s and RPM for 0.06191m radius wheels
-   input_l_rpm = cmd_vel_x * 155 - cmd_vel_yaw * 35.2604; // 35.2604 is the conversion rate between rad/s of yaw to RPM of wheels (takes into account turning radius of cart and radius of wheels.
+  input_r_rpm = cmd_vel_x * 155.0 + cmd_vel_yaw * 35.2604; // 155 is the conversion between m/s and RPM for 0.06191m radius wheels
+  input_l_rpm = cmd_vel_x * 155.0 - cmd_vel_yaw * 35.2604; // 35.2604 is the conversion rate between rad/s of yaw to RPM of wheels (takes into account turning radius of cart and radius of wheels.
+  
   
   
 // 2. READ SENSOR (OUTPUT)
@@ -175,16 +167,42 @@ void loop() {
   r_rpm = 60*(r_ticks/(double)TICKS_REV_R) / dt;
   l_rpm = 60*(l_ticks/(double)TICKS_REV_L) / dt;
   
-  a.data = input_r_rpm;
+
+  e.ticks_data[0].data = l_ticks;
+  e.ticks_data[1].data = r_ticks;
   
-  d.data = r_rpm;
+  t2 = nh.now();
+  
+  if(t2.nsec < t1.nsec){
+    
+     t3.nsec = 1-t1.nsec + t2.nsec;
+     t3.sec = t2.sec - t1.sec -1 ;
+  }else{   
+    t3.sec = t2.sec - t1.sec;
+    t3.nsec = t2.nsec - t1.nsec;
+  }
+  
+  
+  t1 = t2;
+  
   r_ticks = 0; //reset tick counts  
   l_ticks = 0;
 
+  e.stamp = nh.now();
+  e.ticks_data[2].data = input_l_rpm;
+  e.ticks_data[3].data = input_r_rpm;
+  e.ticks_data[4].data = l_rpm;
+  e.ticks_data[5].data = r_rpm;
+ 
+  e.frame_id = "encoder";
+
+  
+  
   
 //  3. COMPUTE ERROR SIGNAL (E = INPUT - OUTPUT)
-  static double e_r = 0;
-  static double e_l = 0;
+
+
+  
   // Save previous error. First iteration of the loop starts at e_r = e_l = 0.
   e_r_prev = e_r;
   e_l_prev = e_l;
@@ -192,7 +210,13 @@ void loop() {
   // Compute current error
   e_r = input_r_rpm - r_rpm;
   e_l = input_l_rpm - l_rpm;
-  b.data = e_r;
+
+  
+  e.ticks_data[6].data = e_l;
+  e.ticks_data[7].data = e_r;
+  e.ticks_data[8].data = t3.nsec;
+
+  //b.data = e_r;
   
 //  4. COMPUTE CONTROL SIGNAL (U)
 //  
@@ -200,16 +224,11 @@ void loop() {
 //  current controller = proportional control (kp);
 //  If error is negative, reverse motor direction
 //  using set_x_mot() 1 = forward, 0 = back 
-  
-  if(e_r < 0 ) set_r_mot(0); 
-  else set_r_mot(1);
 
-  if(e_l < 0) set_l_mot(0); 
-  else set_l_mot(1);
 
   // Proportional control term
-  u_r_prop = kp*abs(e_r);
-  u_l_prop = kp*abs(e_l);
+  u_r_prop = kp*(e_r);
+  u_l_prop = kp*(e_l);
 
   // Integral control term
   static double u_r_int = 0;
@@ -218,27 +237,45 @@ void loop() {
   u_r_int += ki*e_r*dt;
   u_l_int += ki*e_l*dt;
   
+  if(u_r_int > 150) u_r_int = 150;
+  if(u_l_int > 150) u_l_int = 150;
+  
+  if(u_r_int < -150) u_r_int = -150;
+  if(u_l_int < -150) u_l_int = -150;
   // Derivative control term
+  
   u_r_der = kd*(e_r - e_r_prev)/dt;
   u_l_der = kd*(e_l - e_l_prev)/dt;
 
   
   // PID Control Implementation: U(t) = Kp*E(t) + Ki*E(t)*dt + Kd*(E(t) - Eprev(t)/dt
-  static double u_r = 0;
-  static double u_l = 0; // control signals
   
   u_r = u_r_prop + u_r_int + u_r_der;
   u_l = u_l_prop + u_l_int + u_l_der;
+
+  e.ticks_data[8].data = u_l;
+  e.ticks_data[9].data = u_r;
+
+  if(u_r < 0 ){
+    set_r_mot(0);
+    u_r = abs(u_r); 
+  }
+  else set_r_mot(1);
+
+  if(u_l < 0){
+    set_l_mot(0);
+    u_l = abs(u_l); 
+  }
+  else set_l_mot(1);
 
   // Saturate Inputs 
 
   if(u_r > 255) u_r = 255; 
   if(u_l > 255) u_l = 255; 
-  if(u_r < 0) u_r = 0;
-  if(u_l < 0) u_l = 0;
-  c.data = u_r;
+  if(u_r < 10) u_r = 0;
+  if(u_l < 10) u_l = 0;
   
-// 5. WRITE ACTUATORS WITH CONTROL SIGNAL
+  // 5. WRITE ACTUATORS WITH CONTROL SIGNAL
              
   analogWrite(L_MOT,u_l);
   analogWrite(R_MOT,u_r);
@@ -248,21 +285,11 @@ void loop() {
   
 // 6. MISCELLANEOUS 
   
-  //Serial.print(u_r);
-  //Serial.print("  ");
-  //Serial.println(r_rpm);
-  //Serial.print("error: ");
-  //Serial.print(e_r);
-  //Serial.print("   r_rpm: ");
-  //Serial.print(r_rpm);
-  //Serial.println();
   cs_start = false; 
 
-// 7. ROS SPIN
-  pub_a.publish(&a);
-  pub_b.publish(&b);
-  pub_c.publish(&c);
-  pub_d.publish(&d);
+// 7. ROS 
+  
+  pub_ticks.publish(&e);
   nh.spinOnce();
 
 }
