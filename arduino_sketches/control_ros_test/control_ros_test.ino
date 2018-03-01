@@ -39,7 +39,7 @@ volatile bool cs_start = false;
 volatile int waste = 0;
 #define MS_PER_CMP (16)
 // number of compare mathces before cs_start is triggered
-#define N_CMP (6)
+#define N_CMP (3)
 int cmp_count = 0;
 
 // Period of one control loop iteration = dt
@@ -252,6 +252,10 @@ void loop() {
   
   u_r = u_r_prop + u_r_int + u_r_der;
   u_l = u_l_prop + u_l_int + u_l_der;
+  
+  if(input_r_rpm == 0) u_r = 0;
+  if(input_l_rpm == 0) u_l = 0;
+
 
   e.ticks_data[8].data = u_l;
   e.ticks_data[9].data = u_r;
@@ -261,6 +265,7 @@ void loop() {
     u_r = abs(u_r); 
   }
   else set_r_mot(1);
+
 
   if(u_l < 0){
     set_l_mot(0);
@@ -276,7 +281,11 @@ void loop() {
   if(u_l < 10) u_l = 0;
   
   // 5. WRITE ACTUATORS WITH CONTROL SIGNAL
-             
+    
+
+
+  
+  
   analogWrite(L_MOT,u_l);
   analogWrite(R_MOT,u_r);
   //analogWrite(L_MOT,u_l);
