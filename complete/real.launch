@@ -1,0 +1,74 @@
+<launch>
+
+  
+			<!-- CMD_VEL publisher - for testing purposes only. -->
+
+	<!--node name="cmd_vel_publisher" pkg="pack1" type="cmd_vel_publisher.py" output="screen" launch-prefix="xterm -e"/-->
+
+
+			<!-- ARDUINO CONNECTION -->
+
+	<!--node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
+		<param name="port" value "/dev/ttyUSB0"/>
+	</node-->
+
+
+			<!-- AMCL - FOR LOCALIZATION OF ROBOT IN MAP -->
+
+	<include file="$(find amcl)/examples/amcl_diff.launch"/>
+
+
+			<!-- MAP_SERVER -->
+		
+	<node name="map_server" pkg="map_server" type="map_server" args="$(find pack1)/maps/EDML.yaml"/>
+	
+	
+
+			<!-- LIDAR DRIVER -->
+
+	<node name="rplidar_node" pkg="rplidar_ros" type="rplidarNode">
+		<param name="serial_port"         type="string" value="/dev/ttyUSB1"/>  
+  		<param name="serial_baudrate"     type="int"    value="115200"/>
+  		<param name="frame_id"            type="string" value="laser"/>
+  		<param name="inverted"            type="bool"   value="false"/>
+  		<param name="angle_compensate"    type="bool"   value="true"/>
+  	</node>
+
+
+
+			<!-- REMOTE CONNECTION TO ANDROID -->
+
+	<node name="connect" pkg="connect" type="connect.py" output="screen"/>
+	
+
+
+			<!-- PUBLISH ODOMETRY -->
+		
+	<node name="pub_odom" pkg="odom" type="pub_odom.py"/>
+
+
+		
+			<!-- TF BROADCASTER -->
+
+	<node name="static_tf_broadcaster" pkg="tf" type="static_transform_publisher" args=".381 0 .531 0 0 0 Astro/base_link Astro/hokuyo_link 100"/> 
+
+
+			<!-- MOVE BASE -->
+
+	<node name="move_base" pkg="move_base" type="move_base" respawn="false" output="screen">
+
+		<rosparam file="$(find astro_nav)/costmap_common_params.yaml" command="load" ns="global_costmap" />
+
+		<rosparam file="$(find astro_nav)/costmap_common_params.yaml" command="load" ns="local_costmap" />
+
+		<rosparam file="$(find astro_nav)/local_costmap_params.yaml" command="load" />
+
+		<rosparam file="$(find astro_nav)/global_costmap_params.yaml" command="load" />
+
+		<rosparam file="$(find astro_nav)/base_local_planner_params.yaml" command="load" />	
+
+	</node>
+
+
+</launch>
+

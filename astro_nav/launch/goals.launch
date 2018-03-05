@@ -46,9 +46,9 @@
 
 	<node name="rviz" pkg="rviz" type="rviz" output="screen"/>
 
-	<!--node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
-		<param name="port" value="/dev/ttyUSB0"/>
-	</node-->
+	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
+		<param name="port" value="/dev/ttyUSB1"/>
+	</node>
 
 </launch>
 

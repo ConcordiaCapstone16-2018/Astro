@@ -5,7 +5,7 @@
 
 
 	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
-		<param name="port" value="/dev/ttyUSB0"/>
+		<param name="port" value="/dev/ttyUSB6"/>
 	</node>
 
 	<!--node name="debug" pkg="rqt_plot" type="rqt_plot" args = "ticks/ticks_data[3] ticks/ticks_data[5] ticks/ticks_data[9] " /-->
