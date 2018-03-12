@@ -3,12 +3,13 @@
 import sys, socket, select
 import rospy
 from std_msgs.msg import String
+from actionlib_msgs.msg import GoalID
 
-HOST = "192.168.1.2"
+HOST = "192.168.1.4"
 #str(raw_input("Please input IP address :  ") )
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
-PORT = 9009
+PORT = 9010
 
 def chat_server():
 
@@ -24,9 +25,10 @@ def chat_server():
 	
     rospy.init_node("publish_string")
     pub = rospy.Publisher("publish_string", String, queue_size = 10)
+    stopgoal = rospy.Publisher("move_base/cancel", GoalID, queue_size = 10)
     data = String();
-    data = "1"
     rate = rospy.Rate(10)
+    msg = GoalID()
  
     while 1:
 
@@ -60,6 +62,15 @@ def chat_server():
                         print 'publishing to ROS'
                         pub.publish(str(data))
                         print 'Publishing OK'
+                        print data
+                        if str(data) == '0':
+                            msg.id = ''
+                            print "message.id printed"
+                            print msg.id
+                            stopgoal.publish(msg)
+                            print "stopgoal just plublished!"
+                            
+                        print 'im here now'
                         #rospy.spin()
                     else:
                         # remove the socket that's broken    
