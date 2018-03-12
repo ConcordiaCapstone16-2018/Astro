@@ -1,4 +1,4 @@
-#! usr/bin/env python
+#! /usr/bin/env python
 
 # Capstone team 16 - Astro autonomous tool cart
 # 
@@ -29,6 +29,8 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Vector3
+from custom_msgs.msg import ticks
+
 
 wheel_radius = 0.0619
 wheel_separation = 0.4
@@ -50,7 +52,7 @@ def pub_odom():
 	rospy.init_node('pub_odom')
 	pub = rospy.Publisher('pub_odom', Odometry, queue_size=10)
 	odom_tf = tf.TransformBroadcaster()
-	sub = rospy.Subscriber('publish_ticks',Int16MultiArray,callback)
+	sub = rospy.Subscriber('ticks',ticks,callback)
 
 	
 	rospy.spin()
@@ -66,9 +68,12 @@ def callback(ticks):
 		global x0,y0,th0,wheel_radius,wheel_separation,yaw_rate,x_vel
 		print(x0)
 		
-		dt = ticks.data[0]
-		ticks_l = ticks.data[1]
-		ticks_r = ticks.data[2]
+		print(ticks.ticks_data[8])
+
+		dt = ticks.ticks_data[1].data
+		#dt = 0.01		
+		ticks_l = ticks.ticks_data[0].data
+		ticks_r = ticks.ticks_data[1].data
 		
 
 			

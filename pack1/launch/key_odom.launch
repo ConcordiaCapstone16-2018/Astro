@@ -1,0 +1,15 @@
+<launch>
+	<node name="key_strokes" pkg="pack1" type="key_strokes.py"/>
+  
+
+	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
+		<param name="port" value="/dev/ttyUSB0"/>
+	</node>
+
+
+	<node name="odom" pkg="odom" type="pub_odom.py"/>
+	
+	<node name="debug" pkg="rqt_plot" type="rqt_plot"/>
+
+</launch>
+
