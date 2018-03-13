@@ -12,8 +12,8 @@
 
 // Right motor
 #define R_MOT (10)
-#define R_D1 (8)
-#define R_D2 (6)
+#define R_D1 (6)
+#define R_D2 (8)
 
 // Left motor
 #define L_MOT (9)
@@ -37,7 +37,9 @@
 
 volatile bool cs_start = false;
 volatile int waste = 0;
-#define MS_PER_CMP (16)
+int MS_PER_CMP = 16;
+//int N_CMP = 6;
+
 // number of compare mathces before cs_start is triggered
 #define N_CMP (3)
 int cmp_count = 0;
@@ -60,8 +62,8 @@ double u_l = 0; // control signals
 
 double e_r_prev; //save previous error for derivative control
 double e_l_prev;
-double kp=5; // proportional term gain
-double ki=0.5; // integral term constant
+double kp=10; // proportional term gain
+double ki=0; // integral term constant
 double kd=0; // derivative term constant-
 
 // Feedback variables
@@ -75,6 +77,8 @@ volatile int l_ticks = 0;
 // ROS Communication
 
 ros::NodeHandle nh;
+
+
 ros::Time t1,t2,t3;
 // The cmd_vel Twist message will be unpacked in to these variables
 volatile double cmd_vel_x;
@@ -87,7 +91,7 @@ void messageCb(const geometry_msgs::Twist& cmd_vel){
   // Unpack the variables 
   cmd_vel_x = cmd_vel.linear.x;
   cmd_vel_yaw = cmd_vel.angular.z;
-  
+
 }
 
 
@@ -105,6 +109,7 @@ void setup() {
   t1 = nh.now();
   t2 = nh.now();
   t3 = nh.now();
+  
   // Attach the subscriber object to the node handle
   nh.subscribe(cmd_vel_subscriber);  
   nh.advertise(pub_ticks);
@@ -157,9 +162,8 @@ void loop() {
   
 // 1. RECEIVE COMMAND (INPUT)
 
-  input_r_rpm = cmd_vel_x * 155.0 + cmd_vel_yaw * 35.2604; // 155 is the conversion between m/s and RPM for 0.06191m radius wheels
-  input_l_rpm = cmd_vel_x * 155.0 - cmd_vel_yaw * 35.2604; // 35.2604 is the conversion rate between rad/s of yaw to RPM of wheels (takes into account turning radius of cart and radius of wheels.
-  
+  input_r_rpm = cmd_vel_x * 155.0 + 0.75*cmd_vel_yaw * 35.2604; // 155 is the conversion between m/s and RPM for 0.06191m radius wheels
+  input_l_rpm = cmd_vel_x * 155.0 - 0.75*cmd_vel_yaw * 35.2604; // 35.2604 is the conversion rate between rad/s of yaw to RPM of wheels (takes into account turning radius of cart and radius of wheels.
   
   
 // 2. READ SENSOR (OUTPUT)
@@ -167,14 +171,13 @@ void loop() {
   r_rpm = 60*(r_ticks/(double)TICKS_REV_R) / dt;
   l_rpm = 60*(l_ticks/(double)TICKS_REV_L) / dt;
   
-
-  e.ticks_data[0].data = l_ticks;
-  e.ticks_data[1].data = r_ticks;
+  e.ticks_data[0].data = dt;
+  e.ticks_data[1].data = l_ticks;
+  e.ticks_data[2].data = r_ticks;
   
   t2 = nh.now();
   
   if(t2.nsec < t1.nsec){
-    
      t3.nsec = 1-t1.nsec + t2.nsec;
      t3.sec = t2.sec - t1.sec -1 ;
   }else{   
@@ -182,17 +185,14 @@ void loop() {
     t3.nsec = t2.nsec - t1.nsec;
   }
   
-  
-  t1 = t2;
-  
   r_ticks = 0; //reset tick counts  
   l_ticks = 0;
-
+  
   e.stamp = nh.now();
-  e.ticks_data[2].data = input_l_rpm;
-  e.ticks_data[3].data = input_r_rpm;
-  e.ticks_data[4].data = l_rpm;
-  e.ticks_data[5].data = r_rpm;
+  e.ticks_data[3].data = input_l_rpm;
+  e.ticks_data[4].data = input_r_rpm;
+  e.ticks_data[5].data = l_rpm;
+  e.ticks_data[6].data = r_rpm;
  
   e.frame_id = "encoder";
 
@@ -212,9 +212,9 @@ void loop() {
   e_l = input_l_rpm - l_rpm;
 
   
-  e.ticks_data[6].data = e_l;
-  e.ticks_data[7].data = e_r;
-  e.ticks_data[8].data = t3.nsec;
+  e.ticks_data[7].data = e_l;
+  e.ticks_data[8].data = e_r;
+  e.ticks_data[9].data = dt;
 
   //b.data = e_r;
   
@@ -257,8 +257,8 @@ void loop() {
   if(input_l_rpm == 0) u_l = 0;
 
 
-  e.ticks_data[8].data = u_l;
-  e.ticks_data[9].data = u_r;
+  e.ticks_data[9].data = u_l;
+  e.ticks_data[10].data = u_r;
 
   if(u_r < 0 ){
     set_r_mot(0);
@@ -277,8 +277,7 @@ void loop() {
 
   if(u_r > 255) u_r = 255; 
   if(u_l > 255) u_l = 255; 
-  if(u_r < 10) u_r = 0;
-  if(u_l < 10) u_l = 0;
+
   
   // 5. WRITE ACTUATORS WITH CONTROL SIGNAL
     
