@@ -1,4 +1,5 @@
 <launch>
+
 	<node name="key_strokes" pkg="pack1" type="key_strokes.py"/>
   
 
@@ -8,8 +9,6 @@
 
 
 	<node name="odom" pkg="odom" type="pub_odom.py"/>
-	
-	<node name="debug" pkg="rqt_plot" type="rqt_plot"/>
 
 </launch>
 

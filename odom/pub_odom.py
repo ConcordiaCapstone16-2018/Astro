@@ -33,8 +33,9 @@ from custom_msgs.msg import ticks
 
 
 wheel_radius = 0.0619
-wheel_separation = 0.4
+wheel_separation = 0.42
 ticks_rev = 497.0
+
 x0 = 0
 y0 = 0
 th0 = 0
@@ -43,43 +44,34 @@ yaw_rate = 0
 
 
 def pub_odom():
-	print("\nBeginning to publish odometry data...\n")
 
-
-	
 	global pub,odom_tf,sub
 
 	rospy.init_node('pub_odom')
-	pub = rospy.Publisher('pub_odom', Odometry, queue_size=10)
-	odom_tf = tf.TransformBroadcaster()
-	sub = rospy.Subscriber('ticks',ticks,callback)
 
-	
+	pub = rospy.Publisher('pub_odom', Odometry, queue_size=10)
+	sub = rospy.Subscriber('ticks',ticks,callback)
+	odom_tf = tf.TransformBroadcaster()
+
+	print("\nBeginning to publish odometry data...\n")
+
 	rospy.spin()
 
-		
 
 def callback(ticks):
 	
-		print("Topic received. processing data")			
+		print("Ticks Received.")			
 
 		# 1. Receive ticks
-		#    dt will have to be read from consecutive stamped messages  
+		#    dt will have to be read from consecutive stamped messages 
+ 
 		global x0,y0,th0,wheel_radius,wheel_separation,yaw_rate,x_vel
-		print(x0)
 		
-		print(ticks.ticks_data[8])
-
-		dt = ticks.ticks_data[1].data
-		#dt = 0.01		
-		ticks_l = ticks.ticks_data[0].data
-		ticks_r = ticks.ticks_data[1].data
+		dt = ticks.ticks_data[0].data
+		ticks_l = ticks.ticks_data[1].data		
+		ticks_r = ticks.ticks_data[2].data
 		
 
-			
-
-
-	
 		# 2. Calculate wheel vel (twist)
 		w_r = 2*math.pi*ticks_r / (ticks_rev * dt)
 		w_l = 2*math.pi*ticks_l / (ticks_rev * dt)
@@ -97,8 +89,11 @@ def callback(ticks):
  
 			turning_radius = (wheel_separation/2.0) * (v_l + v_r) / ( v_r - v_l)	
 			ICCx = x0 - turning_radius * math.sin(th0)
+
 			ICCy = y0 + turning_radius * math.cos(th0)
+
 			x = math.cos(yaw_rate*dt) * (x0 - ICCx) - math.sin(yaw_rate*dt) * (y0 - ICCy) + ICCx
+
 			y = math.sin(yaw_rate*dt) * (x0 - ICCx) + math.cos(yaw_rate*dt) * (y0 - ICCy) + ICCy
 				
 			th = (th0 + (yaw_rate*dt))
@@ -131,7 +126,7 @@ def callback(ticks):
 		odom.header.stamp = rospy.Time.now()
 		odom.header.frame_id = "odom"
 		odom.child_frame_id = "Astro/base_link"
-		odom.pose.pose = Pose(Point(x,y,0),Quaternion(0,0,0,quat[3])) 
+		odom.pose.pose = Pose(Point(x,y,0),Quaternion(0,0,quat[2],quat[3])) 
 		odom.twist.twist = Twist(Vector3(x_vel,0,0),Vector3(0,0,yaw_rate))
 		x0 = x
 		y0 = y
