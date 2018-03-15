@@ -6,6 +6,7 @@
 // Twist msg is two Vector3 objects: LINEAR x y z, ANGULAR roll pitch yaw
 #include <geometry_msgs/Twist.h>
 #include <custom_msgs/ticks.h>
+#include <custom_msgs/ticks_min.h>
 
 // -------- DEFINE STATEMENTS AND GLOBAL VARIABLES --------
 #define BIT(a) (1<<(a)) // turns on the specified bit within that register
@@ -98,9 +99,10 @@ void messageCb(const geometry_msgs::Twist& cmd_vel){
 // necessary ros object. Need one for each topic you want to subscribe to
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_subscriber("cmd_vel", &messageCb );
 
-custom_msgs::ticks e;
+//custom_msgs::ticks e;
+custom_msgs::ticks_min f;
 
-ros::Publisher pub_ticks("ticks", &e);
+ros::Publisher pub_ticks("ticks", &f);
 
 void setup() {
 
@@ -171,9 +173,11 @@ void loop() {
   r_rpm = 60*(r_ticks/(double)TICKS_REV_R) / dt;
   l_rpm = 60*(l_ticks/(double)TICKS_REV_L) / dt;
   
-  e.ticks_data[0].data = dt;
-  e.ticks_data[1].data = l_ticks;
-  e.ticks_data[2].data = r_ticks;
+  //e.ticks_data[0].data = dt;
+  //e.ticks_data[1].data = l_ticks;
+  //e.ticks_data[2].data = r_ticks;
+  f.ticks_data[0].data = l_ticks;
+  f.ticks_data[1].data = r_ticks;
   
   t2 = nh.now();
   
@@ -188,13 +192,13 @@ void loop() {
   r_ticks = 0; //reset tick counts  
   l_ticks = 0;
   
-  e.stamp = nh.now();
-  e.ticks_data[3].data = input_l_rpm;
-  e.ticks_data[4].data = input_r_rpm;
-  e.ticks_data[5].data = l_rpm;
-  e.ticks_data[6].data = r_rpm;
+  //e.stamp = nh.now();
+  //e.ticks_data[3].data = input_l_rpm;
+  //e.ticks_data[4].data = input_r_rpm;
+  //e.ticks_data[5].data = l_rpm;
+  //e.ticks_data[6].data = r_rpm;
  
-  e.frame_id = "encoder";
+  //e.frame_id = "encoder";
 
   
   
@@ -212,9 +216,9 @@ void loop() {
   e_l = input_l_rpm - l_rpm;
 
   
-  e.ticks_data[7].data = e_l;
-  e.ticks_data[8].data = e_r;
-  e.ticks_data[9].data = dt;
+  //e.ticks_data[7].data = e_l;
+  //e.ticks_data[8].data = e_r;
+  //e.ticks_data[9].data = dt;
 
   //b.data = e_r;
   
@@ -257,8 +261,8 @@ void loop() {
   if(input_l_rpm == 0) u_l = 0;
 
 
-  e.ticks_data[9].data = u_l;
-  e.ticks_data[10].data = u_r;
+  //e.ticks_data[9].data = u_l;
+  //e.ticks_data[10].data = u_r;
 
   if(u_r < 0 ){
     set_r_mot(0);
@@ -297,7 +301,7 @@ void loop() {
 
 // 7. ROS 
   
-  pub_ticks.publish(&e);
+  pub_ticks.publish(&f);
   nh.spinOnce();
 
 }
