@@ -10,8 +10,8 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 
 publish_rate = 30
-fwd_vel = .5
-bwd_vel = -.5
+fwd_vel = .35
+bwd_vel = -.35
 yaw_vel = 1
 
 def key_strokes():

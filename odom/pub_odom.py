@@ -30,6 +30,7 @@ from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Vector3
 from custom_msgs.msg import ticks
+from custom_msgs.msg import ticks_min
 
 
 wheel_radius = 0.0619
@@ -41,7 +42,7 @@ y0 = 0
 th0 = 0
 x_vel = 0
 yaw_rate = 0
-
+dt = .048
 
 def pub_odom():
 
@@ -50,7 +51,7 @@ def pub_odom():
 	rospy.init_node('pub_odom')
 
 	pub = rospy.Publisher('pub_odom', Odometry, queue_size=10)
-	sub = rospy.Subscriber('ticks',ticks,callback)
+	sub = rospy.Subscriber('ticks',ticks_min,callback)
 	odom_tf = tf.TransformBroadcaster()
 
 	print("\nBeginning to publish odometry data...\n")
@@ -67,9 +68,9 @@ def callback(ticks):
  
 		global x0,y0,th0,wheel_radius,wheel_separation,yaw_rate,x_vel
 		
-		dt = ticks.ticks_data[0].data
-		ticks_l = ticks.ticks_data[1].data		
-		ticks_r = ticks.ticks_data[2].data
+		#dt = ticks.ticks_data[0].data
+		ticks_l = ticks.ticks_data[0].data		
+		ticks_r = ticks.ticks_data[1].data
 		
 
 		# 2. Calculate wheel vel (twist)
@@ -98,7 +99,6 @@ def callback(ticks):
 				
 			th = (th0 + (yaw_rate*dt))
 
-			print(x_vel)
 
 		except ZeroDivisionError:
 			
@@ -107,24 +107,23 @@ def callback(ticks):
 		 	x = x0 + x_vel*dt*math.cos(th0)
 			y = y0 + x_vel*dt*math.sin(th0)
 			th = th0
-			print(x_vel)
 
 		# pack up the Odometry object
 	
 
 		quat = tf.transformations.quaternion_from_euler(0,0,th)
-	
+		print("publish tf")
 		odom_tf.sendTransform(
 			(x,y,0.0),
 			quat,
 			rospy.Time.now(), 
 			"Astro/base_link",
-			"odom"
+			"Astro/odom"
 		)
 
 		odom = Odometry()
 		odom.header.stamp = rospy.Time.now()
-		odom.header.frame_id = "odom"
+		odom.header.frame_id = "Astro/odom"
 		odom.child_frame_id = "Astro/base_link"
 		odom.pose.pose = Pose(Point(x,y,0),Quaternion(0,0,quat[2],quat[3])) 
 		odom.twist.twist = Twist(Vector3(x_vel,0,0),Vector3(0,0,yaw_rate))
