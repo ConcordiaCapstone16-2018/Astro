@@ -7,10 +7,9 @@
 
 
 			<!-- ARDUINO CONNECTION -->
-
-	<!--node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
-		<param name="port" value "/dev/ttyUSB0"/>
-	</node-->
+	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
+		<param name="port" value="/dev/ttyUSB1"/>
+	</node>
 
 
 			<!-- AMCL - FOR LOCALIZATION OF ROBOT IN MAP -->
@@ -27,9 +26,9 @@
 			<!-- LIDAR DRIVER -->
 
 	<node name="rplidar_node" pkg="rplidar_ros" type="rplidarNode">
-		<param name="serial_port"         type="string" value="/dev/ttyUSB1"/>  
+		<param name="serial_port"         type="string" value="/dev/ttyUSB0"/>  
   		<param name="serial_baudrate"     type="int"    value="115200"/>
-  		<param name="frame_id"            type="string" value="laser"/>
+  		<param name="frame_id"            type="string" value="Astro/hokuyo_link"/>
   		<param name="inverted"            type="bool"   value="false"/>
   		<param name="angle_compensate"    type="bool"   value="true"/>
   	</node>
@@ -38,9 +37,8 @@
 
 			<!-- REMOTE CONNECTION TO ANDROID -->
 
-	<node name="connect" pkg="connect" type="connect.py" output="screen"/>
+	<!--node name="connect" pkg="connect" type="connect.py" output="screen"/-->
 	
-
 
 			<!-- PUBLISH ODOMETRY -->
 		
