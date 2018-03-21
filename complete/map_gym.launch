@@ -1,0 +1,52 @@
+<launch>
+
+	<!-- This node is launched when the goal is to map a certain environment. When the mapping is finished you must save the map using the following command: rosrun map_server map_saver -->
+
+
+	<!-- KEYBOARD INPUT NODE -->
+
+	<node name="key_strokes" pkg="pack1" type="key_strokes.py"/>
+  
+		
+	<!-- ARDUINO CONNECTION -->
+
+	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
+		<param name="port" value="/dev/ttyUSB1"/>
+	</node>
+
+
+	<!-- LIDAR DRIVER -->
+
+	<node name="rplidar_node" pkg="rplidar_ros" type="rplidarNode">
+		<param name="serial_port"         type="string" value="/dev/ttyUSB0"/>  
+  		<param name="serial_baudrate"     type="int"    value="115200"/>
+  		<param name="frame_id"            type="string" value="Astro/hokuyo_link"/>
+  		<param name="inverted"            type="bool"   value="false"/>
+  		<param name="angle_compensate"    type="bool"   value="true"/>
+  	</node>
+
+
+	<!-- PUBLISH ODOMETRY -->
+		
+	<node name="pub_odom" pkg="odom" type="pub_odom.py"/>
+
+		
+	<!-- TF BROADCASTER -->
+
+	<node name="static_tf_broadcaster" pkg="tf" type="static_transform_publisher" args=".381 0 .531 0 0 0 Astro/base_link Astro/hokuyo_link 100"/> 
+
+
+	<!-- SLAM MAPPING  NODE -->
+
+	<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" args="_odom_frame:=Astro/odom _base_frame:=Astro/base_link"/>
+
+
+	<!-- VISUALIZING NODE -->
+
+	<node name="rviz" pkg="rviz" type="rviz"/>
+
+
+	
+
+</launch>
+

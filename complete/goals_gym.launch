@@ -1,10 +1,9 @@
 <launch>
 
+			<!-- This node is launched when the goal is to map a certain environment. When the mapping is finished you must save the map using the following command: rosrun map_server map_saver -->
+
   
-			<!-- CMD_VEL publisher - for testing purposes only. -->
-
-	<!--node name="cmd_vel_publisher" pkg="pack1" type="cmd_vel_publisher.py" output="screen" launch-prefix="xterm -e"/-->
-
+	
 
 			<!-- ARDUINO CONNECTION -->
 	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
@@ -19,7 +18,7 @@
 
 			<!-- MAP_SERVER -->
 		
-	<node name="map_server" pkg="map_server" type="map_server" args="$(find pack1)/maps/EDML.yaml"/>
+	<node name="map_server" pkg="map_server" type="map_server" args="$(find complete)/maps/map.yaml"/>
 	
 	
 
