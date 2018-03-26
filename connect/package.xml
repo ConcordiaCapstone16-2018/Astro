@@ -2,7 +2,7 @@
 <package format="2">
   <name>connect</name>
   <version>0.0.0</version>
-  <description>The connect package</description>
+  <description>The connect package provides implementation of a "server" which can receive and subsequently publish commands to ROS from a remote PC. </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

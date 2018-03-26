@@ -2,7 +2,7 @@
 <package format="2">
   <name>complete</name>
   <version>0.0.0</version>
-  <description>The complete package</description>
+  <description>Implementation of the navigation stack on Astro. Includes two launch files - one to map the area (map_gym.launch), and one for operation of the toolcart in the area (goals_gym.launch) </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

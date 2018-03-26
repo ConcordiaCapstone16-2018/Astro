@@ -1,7 +1,7 @@
 <launch>
-	<node name="key_strokes" pkg="pack1" type="key_strokes.py"/>
+	<node name="key_strokes" pkg="scripts" type="key_strokes.py"/>
   
-	<node name="cmd_vel_publisher" pkg="pack1" type="cmd_vel_publisher.py" output="screen" launch-prefix="xterm -e"/>
+	<node name="cmd_vel_publisher" pkg="scripts" type="cmd_vel_publisher.py" output="screen" launch-prefix="xterm -e"/>
 
 
 	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
@@ -13,7 +13,7 @@
 	</node-->
 
 
-	<!--node name="repeater" pkg="pack1" type="repeater.py"/-->
+	<!--node name="repeater" pkg="scripts" type="repeater.py"/-->
 
 	
 	<node name="debug" pkg="rqt_plot" type="rqt_plot"/>

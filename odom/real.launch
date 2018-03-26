@@ -1,7 +1,7 @@
 <launch>
 
   
-	<node name="cmd_vel_publisher" pkg="pack1" type="cmd_vel_publisher.py" output="screen" launch-prefix="xterm -e"/>
+	<node name="cmd_vel_publisher" pkg="scripts" type="cmd_vel_publisher.py" output="screen" launch-prefix="xterm -e"/>
 
 
 	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">

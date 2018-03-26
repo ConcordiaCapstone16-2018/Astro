@@ -5,24 +5,31 @@
   
 	
 
-			<!-- ARDUINO CONNECTION -->
-	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
+			<!-- ARDUINO CONNECTION 1 (Astro_controller.ino) -->
+	<node name="serial_comm1" pkg="rosserial_python" type="serial_node.py">
 		<param name="port" value="/dev/ttyUSB1"/>
 	</node>
 
 
-			<!-- AMCL - FOR LOCALIZATION OF ROBOT IN MAP -->
+			<!-- ARDUINO CONNECTION 2 (Astro_lasers.ino) -->
+
+	<node name="serial_comm2" pkg="rosserial_python" type="serial_node.py">
+		<param name="port" value="/dev/ttyUSB2"/>
+	</node>
+
+
+			<!-- MAP_SERVER  -->
+		
+	<node name="map_server" pkg="map_server" type="map_server" args="$(find complete)/maps/map.yaml"/>
+	
+
+
+			<!-- AMCL -->
 
 	<include file="$(find amcl)/examples/amcl_diff.launch"/>
 
 
-			<!-- MAP_SERVER -->
-		
-	<node name="map_server" pkg="map_server" type="map_server" args="$(find complete)/maps/map.yaml"/>
-	
-	
-
-			<!-- LIDAR DRIVER -->
+			<!-- RPLIDAR DRIVER -->
 
 	<node name="rplidar_node" pkg="rplidar_ros" type="rplidarNode">
 		<param name="serial_port"         type="string" value="/dev/ttyUSB0"/>  
@@ -31,12 +38,6 @@
   		<param name="inverted"            type="bool"   value="false"/>
   		<param name="angle_compensate"    type="bool"   value="true"/>
   	</node>
-
-
-
-			<!-- REMOTE CONNECTION TO ANDROID -->
-
-	<!--node name="connect" pkg="connect" type="connect.py" output="screen"/-->
 	
 
 			<!-- PUBLISH ODOMETRY -->
@@ -65,6 +66,17 @@
 		<rosparam file="$(find astro_nav)/base_local_planner_params.yaml" command="load" />	
 
 	</node>
+
+			<!-- REPEATER -->
+	<node name="repeater" pkg="scripts" type="repeater.py"/>
+	
+			<!-- REMOTE CONNECTION TO ANDROID -->
+
+	<!--node name="connect" pkg="connect" type="connect.py" output="screen"/-->
+
+
+			<!-- OBSTACLE DETECTION WITH LASERS -->
+	<!--node name="lasers" pkg="collision" type="Status.py"-->
 
 
 </launch>

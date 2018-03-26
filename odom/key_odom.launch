@@ -1,6 +1,9 @@
 <launch>
+	
+	<!-- TEST ODOMETRY -->
 
-	<node name="key_strokes" pkg="pack1" type="key_strokes.py"/>
+
+	<node name="key_strokes" pkg="scripts" type="key_strokes.py"/>
   
 
 	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">

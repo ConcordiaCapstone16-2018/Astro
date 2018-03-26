@@ -8,7 +8,7 @@
 
 			<!-- ARDUINO CONNECTION -->
 	<node name="serial_comm" pkg="rosserial_python" type="serial_node.py">
-		<param name="port" value="/dev/ttyUSB1"/>
+		<param name="port" value="/dev/ttyUSB0"/>
 	</node>
 
 

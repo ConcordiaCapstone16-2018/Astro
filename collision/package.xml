@@ -2,7 +2,7 @@
 <package format="2">
   <name>collision</name>
   <version>0.0.0</version>
-  <description>The collision package</description>
+  <description>The collision package - Must be run in conjunction with Astro_laser.ino arduino program. Publishes a "STOP" command to the nav_stack when an object is detected in the field of view of lasers. </description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

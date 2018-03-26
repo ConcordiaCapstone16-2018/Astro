@@ -3,7 +3,7 @@
 
 	<!-- KEYBOARD INPUT NODE -->
 
-	<node name="key_strokes" pkg="pack1" type="key_strokes.py"/>
+	<node name="key_strokes" pkg="scripts" type="key_strokes.py"/>
 
 
 

@@ -47,7 +47,7 @@
 	<node name="rviz" pkg="rviz" type="rviz" output="screen"/>
 	
 	<!-- TELEOP -->
-	<node name="teleop" pkg="pack1" type="key_strokes.py"/>
+	<node name="teleop" pkg="scripts" type="key_strokes.py"/>
 
 
 </launch>
